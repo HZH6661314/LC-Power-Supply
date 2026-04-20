@@ -1,0 +1,294 @@
+version: "4.1"
+name: LC_Power
+type: ARM
+deviceName: null
+packDir: null
+srcDirs: []
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders:
+    - name: Application
+      files:
+        - path: ../Layer/Application/state_machine.c
+        - path: ../Layer/Application/state_machine.h
+        - path: ../Layer/Application/protection.c
+        - path: ../Layer/Application/protection.h
+      folders:
+        - name: MDK-ARM
+          files:
+            - path: startup_stm32f334x8.s
+          folders: []
+        - name: User
+          files: []
+          folders:
+            - name: Core
+              files:
+                - path: ../Core/Src/main.c
+                - path: ../Core/Src/gpio.c
+                - path: ../Core/Src/adc.c
+                - path: ../Core/Src/hrtim.c
+                - path: ../Core/Src/tim.c
+                - path: ../Core/Src/stm32f3xx_it.c
+                - path: ../Core/Src/stm32f3xx_hal_msp.c
+              folders: []
+    - name: Drivers
+      files: []
+      folders:
+        - name: STM32F3xx_HAL_Driver
+          files:
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi_ex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_adc_ex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_exti.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_hrtim.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c
+            - path: ../Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c
+          folders: []
+        - name: CMSIS
+          files:
+            - path: ../Core/Src/system_stm32f3xx.c
+          folders: []
+    - name: Scheduler
+      files:
+        - path: ../Layer/Scheduler/task_manager.c
+        - path: ../Layer/Scheduler/task_manager.h
+      folders: []
+    - name: Product
+      files:
+        - path: ../Layer/Product/ui_display.c
+        - path: ../Layer/Product/ui_display.h
+        - path: ../Layer/Product/param_store.c
+        - path: ../Layer/Product/param_store.h
+        - path: ../Layer/Product/key.c
+        - path: ../Layer/Product/key.h
+      folders: []
+    - name: Control
+      files:
+        - path: ../Layer/Control/pid_voltage.c
+        - path: ../Layer/Control/pid_voltage.h
+        - path: ../Layer/Control/2p2z_current.c
+        - path: ../Layer/Control/2p2z_current.h
+        - path: ../Layer/Control/filter.c
+        - path: ../Layer/Control/filter.h
+      folders: []
+    - name: Driver
+      files:
+        - path: ../Layer/Driver/1.54TFT.c
+        - path: ../Layer/Driver/tft_dashboard.c
+        - path: ../Layer/Driver/tft_gfx.c
+        - path: ../Layer/Driver/tft_selftest.c
+        - path: ../Layer/Driver/temp_sensor.c
+      folders: []
+    - name: Bsp
+      files:
+        - path: ../Layer/Bsp/bsp_adc.c
+        - path: ../Layer/Bsp/bsp_adc.h
+        - path: ../Layer/Bsp/bsp_gpio.c
+        - path: ../Layer/Bsp/bsp_gpio.h
+        - path: ../Layer/Bsp/bsp_hrtim.c
+        - path: ../Layer/Bsp/bsp_hrtim.h
+        - path: ../Layer/Bsp/bsp_spi.c
+        - path: ../Layer/Bsp/bsp_spi.h
+      folders: []
+    - name: Middlewares
+      files: []
+      folders:
+        - name: Library
+          files: []
+          folders:
+            - name: DSP Library
+              files: []
+              folders:
+                - name: DSP Library
+                  files:
+                    - path: ../Middlewares/ST/ARM/DSP/Lib/arm_cortexM4lf_math.lib
+                  folders: []
+    - name: ::CMSIS
+      files: []
+      folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 292e6b18e83ca8b2c8552ab7e849fbbb
+targets:
+  LC_Power:
+    cppPreprocessAttrs:
+      defineList:
+        - USE_HAL_DRIVER
+        - STM32F334x8
+      incList:
+        - ../Core/Inc
+        - ../Drivers/STM32F3xx_HAL_Driver/Inc
+        - ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy
+        - ../Drivers/CMSIS/Device/ST/STM32F3xx/Include
+        - ../Drivers/CMSIS/Include
+        - ../Layer/Product
+        - ../Layer/Application
+        - ../Layer/Control
+        - ../Layer/Driver
+        - ../Middlewares/ST/ARM/DSP/Inc
+        - ../Layer/Bsp
+        - ../Layer/Scheduler
+        - .cmsis/include
+        - RTE/_LC_Power
+      libList: []
+    excludeList: []
+    settings: {}
+    toolchain: AC5
+    toolchainConfigMap:
+      AC5:
+        archExtensions: ""
+        cpuType: Cortex-M4
+        floatingPointHardware: single
+        options:
+          version: 4
+          afterBuildTasks: []
+          asm-compiler:
+            defines: []
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            CXX_FLAGS: --diag_suppress=1 --diag_suppress=1295
+            C_FLAGS: --diag_suppress=1 --diag_suppress=1295
+            c99-mode: true
+            one-elf-section-per-function: true
+            optimization: level-3
+            warnings: all-warnings
+          global:
+            output-debug-info: enable
+            use-microLIB: false
+          linker:
+            $outputTaskExcludes:
+              - .bin
+            output-format: elf
+            ro-base: ""
+            rw-base: ""
+            xo-base: ""
+        scatterFilePath: ""
+        storageLayout:
+          RAM:
+            - id: 1
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 2
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 3
+              isChecked: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              noInit: false
+              tag: RAM
+            - id: 1
+              isChecked: true
+              mem:
+                size: "0x3000"
+                startAddr: "0x20000000"
+              noInit: false
+              tag: IRAM
+            - id: 2
+              isChecked: true
+              mem:
+                size: "0x1000"
+                startAddr: "0x10000000"
+              noInit: false
+              tag: IRAM
+          ROM:
+            - id: 1
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 3
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: ROM
+            - id: 1
+              isChecked: true
+              isStartup: true
+              mem:
+                size: "0x10000"
+                startAddr: "0x8000000"
+              tag: IROM
+            - id: 2
+              isChecked: false
+              isStartup: false
+              mem:
+                size: "0x0"
+                startAddr: "0x0"
+              tag: IROM
+        useCustomScatterFile: false
+      AC6:
+        archExtensions: ""
+        cpuType: Cortex-M4
+        floatingPointHardware: single
+        options: ""
+        scatterFilePath: <YOUR_SCATTER_FILE>.sct
+        storageLayout:
+          RAM:
+            - id: 1
+              isChecked: true
+              mem:
+                size: "0x5000"
+                startAddr: "0x20000000"
+              noInit: false
+              tag: IRAM
+          ROM:
+            - id: 1
+              isChecked: true
+              isStartup: true
+              mem:
+                size: "0x10000"
+                startAddr: "0x08000000"
+              tag: IROM
+        useCustomScatterFile: false
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+      OpenOCD:
+        baseAddr: "0x08000000"
+        bin: ""
+        interface: cmsis-dap
+        target: stm32f3x
+    uploader: OpenOCD

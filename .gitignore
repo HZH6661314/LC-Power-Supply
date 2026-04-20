@@ -1,0 +1,33 @@
+# Ignore Keil/MDK build output
+code/LC_Power/MDK-ARM/build/
+
+# Ignore temporary and editor files
+*.tmp
+*.temp
+*.bak
+*~
+*.swp
+*.swo
+*.log
+*.ide
+*.user
+*.orig
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore MDK user-specific files and temporary workspace files
+*.uvoptx
+*.uvguix.*
+*.lnp
+
+# Ignore generated object / binary files
+*.o
+*.axf
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.s
