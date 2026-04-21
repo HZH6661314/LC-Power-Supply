@@ -11,9 +11,7 @@ virtualFolder:
     - name: Application
       files:
         - path: ../Layer/Application/state_machine.c
-        - path: ../Layer/Application/state_machine.h
         - path: ../Layer/Application/protection.c
-        - path: ../Layer/Application/protection.h
       folders:
         - name: MDK-ARM
           files:
@@ -65,25 +63,18 @@ virtualFolder:
     - name: Scheduler
       files:
         - path: ../Layer/Scheduler/task_manager.c
-        - path: ../Layer/Scheduler/task_manager.h
       folders: []
     - name: Product
       files:
         - path: ../Layer/Product/ui_display.c
-        - path: ../Layer/Product/ui_display.h
         - path: ../Layer/Product/param_store.c
-        - path: ../Layer/Product/param_store.h
         - path: ../Layer/Product/key.c
-        - path: ../Layer/Product/key.h
       folders: []
     - name: Control
       files:
         - path: ../Layer/Control/pid_voltage.c
-        - path: ../Layer/Control/pid_voltage.h
         - path: ../Layer/Control/2p2z_current.c
-        - path: ../Layer/Control/2p2z_current.h
         - path: ../Layer/Control/filter.c
-        - path: ../Layer/Control/filter.h
       folders: []
     - name: Driver
       files:
@@ -92,17 +83,15 @@ virtualFolder:
         - path: ../Layer/Driver/tft_gfx.c
         - path: ../Layer/Driver/tft_selftest.c
         - path: ../Layer/Driver/temp_sensor.c
+        - path: ../Layer/Driver/W25Q256.c
+        - path: ../Layer/Driver/W25Q256.h
       folders: []
     - name: Bsp
       files:
         - path: ../Layer/Bsp/bsp_adc.c
-        - path: ../Layer/Bsp/bsp_adc.h
         - path: ../Layer/Bsp/bsp_gpio.c
-        - path: ../Layer/Bsp/bsp_gpio.h
         - path: ../Layer/Bsp/bsp_hrtim.c
-        - path: ../Layer/Bsp/bsp_hrtim.h
         - path: ../Layer/Bsp/bsp_spi.c
-        - path: ../Layer/Bsp/bsp_spi.h
       folders: []
     - name: Middlewares
       files: []

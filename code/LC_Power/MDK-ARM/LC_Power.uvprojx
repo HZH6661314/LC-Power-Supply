@@ -554,11 +554,6 @@
               <FileType>1</FileType>
               <FilePath>..\Layer\Scheduler\task_manager.c</FilePath>
             </File>
-            <File>
-              <FileName>task_manager.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Scheduler\task_manager.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -570,29 +565,14 @@
               <FilePath>..\Layer\Product\ui_display.c</FilePath>
             </File>
             <File>
-              <FileName>ui_display.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Product\ui_display.h</FilePath>
-            </File>
-            <File>
               <FileName>param_store.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Product\param_store.c</FilePath>
             </File>
             <File>
-              <FileName>param_store.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Product\param_store.h</FilePath>
-            </File>
-            <File>
               <FileName>key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Product\key.c</FilePath>
-            </File>
-            <File>
-              <FileName>key.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Product\key.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -605,19 +585,9 @@
               <FilePath>..\Layer\Application\state_machine.c</FilePath>
             </File>
             <File>
-              <FileName>state_machine.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Application\state_machine.h</FilePath>
-            </File>
-            <File>
               <FileName>protection.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Application\protection.c</FilePath>
-            </File>
-            <File>
-              <FileName>protection.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Application\protection.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -630,29 +600,14 @@
               <FilePath>..\Layer\Control\pid_voltage.c</FilePath>
             </File>
             <File>
-              <FileName>pid_voltage.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Control\pid_voltage.h</FilePath>
-            </File>
-            <File>
               <FileName>2p2z_current.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Control\2p2z_current.c</FilePath>
             </File>
             <File>
-              <FileName>2p2z_current.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Control\2p2z_current.h</FilePath>
-            </File>
-            <File>
               <FileName>filter.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Control\filter.c</FilePath>
-            </File>
-            <File>
-              <FileName>filter.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Control\filter.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -684,6 +639,16 @@
               <FileType>1</FileType>
               <FilePath>..\Layer\Driver\temp_sensor.c</FilePath>
             </File>
+            <File>
+              <FileName>W25Q256.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Layer\Driver\W25Q256.c</FilePath>
+            </File>
+            <File>
+              <FileName>W25Q256.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Layer\Driver\W25Q256.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -695,19 +660,9 @@
               <FilePath>..\Layer\Bsp\bsp_adc.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_adc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Bsp\bsp_adc.h</FilePath>
-            </File>
-            <File>
               <FileName>bsp_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Bsp\bsp_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_gpio.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Bsp\bsp_gpio.h</FilePath>
             </File>
             <File>
               <FileName>bsp_hrtim.c</FileName>
@@ -715,19 +670,9 @@
               <FilePath>..\Layer\Bsp\bsp_hrtim.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_hrtim.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Bsp\bsp_hrtim.h</FilePath>
-            </File>
-            <File>
               <FileName>bsp_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Bsp\bsp_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Bsp\bsp_spi.h</FilePath>
             </File>
           </Files>
         </Group>
