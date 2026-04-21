@@ -78,19 +78,19 @@ struct gpio_ops {
 #include "main.h"  // 包含STM32的GPIO定义
 
 // LED引脚定义
-extern const gpio_pin_t GPIO_LED0;
-extern const gpio_pin_t GPIO_LED1;
-extern const gpio_pin_t GPIO_LED2;
-extern const gpio_pin_t GPIO_LED3;
+extern gpio_pin_t GPIO_LED0;
+extern gpio_pin_t GPIO_LED1;
+extern gpio_pin_t GPIO_LED2;
+extern gpio_pin_t GPIO_LED3;
 
 // 按键引脚定义
-extern const gpio_pin_t GPIO_BTN_KEY1_SET;
-extern const gpio_pin_t GPIO_BTN_KEY1_EXIT;
-extern const gpio_pin_t GPIO_BTN_KEY1_UP;
-extern const gpio_pin_t GPIO_BTN_KEY1_DOWN;
-extern const gpio_pin_t GPIO_BTN_KEY2_SET;
-extern const gpio_pin_t GPIO_BTN_KEY2_UP;
-extern const gpio_pin_t GPIO_BTN_KEY2_DOWN;
+extern gpio_pin_t GPIO_BTN_KEY1_SET;
+extern gpio_pin_t GPIO_BTN_KEY1_EXIT;
+extern gpio_pin_t GPIO_BTN_KEY1_UP;
+extern gpio_pin_t GPIO_BTN_KEY1_DOWN;
+extern gpio_pin_t GPIO_BTN_KEY2_SET;
+extern gpio_pin_t GPIO_BTN_KEY2_UP;
+extern gpio_pin_t GPIO_BTN_KEY2_DOWN;
 
 #elif defined(ARDUINO_PLATFORM)
 // Arduino平台的引脚定义

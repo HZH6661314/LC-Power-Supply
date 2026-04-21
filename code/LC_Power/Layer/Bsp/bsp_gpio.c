@@ -25,8 +25,25 @@
 /* Private macros ------------------------------------------------------------*/
 
 // 将GPIO_PIN_x位掩码转换为引脚号的宏（编译时计算）
-// 使用__builtin_ctz计算尾随零的个数（即位位置）
-#define GPIO_PIN_TO_NUM(pin) (__builtin_ctz(pin))
+// 使用条件表达式展开，支持常量初始化
+#define GPIO_PIN_TO_NUM(pin) ( \
+    (pin) == 0x0001 ? 0 : \
+    (pin) == 0x0002 ? 1 : \
+    (pin) == 0x0004 ? 2 : \
+    (pin) == 0x0008 ? 3 : \
+    (pin) == 0x0010 ? 4 : \
+    (pin) == 0x0020 ? 5 : \
+    (pin) == 0x0040 ? 6 : \
+    (pin) == 0x0080 ? 7 : \
+    (pin) == 0x0100 ? 8 : \
+    (pin) == 0x0200 ? 9 : \
+    (pin) == 0x0400 ? 10 : \
+    (pin) == 0x0800 ? 11 : \
+    (pin) == 0x1000 ? 12 : \
+    (pin) == 0x2000 ? 13 : \
+    (pin) == 0x4000 ? 14 : \
+    (pin) == 0x8000 ? 15 : 0 \
+)
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -34,18 +51,18 @@
 static const struct gpio_ops *g_gpio_ops = NULL;
 
 /* GPIO引脚定义（STM32平台） */
-const gpio_pin_t GPIO_LED0 = { .port = (void*)LED0_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED0_Pin) };
-const gpio_pin_t GPIO_LED1 = { .port = (void*)LED1_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED1_Pin) };
-const gpio_pin_t GPIO_LED2 = { .port = (void*)LED2_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED2_Pin) };
-const gpio_pin_t GPIO_LED3 = { .port = (void*)LED3_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED3_Pin) };
+gpio_pin_t GPIO_LED0 = { .port = (void*)LED0_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED0_Pin) };
+gpio_pin_t GPIO_LED1 = { .port = (void*)LED1_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED1_Pin) };
+gpio_pin_t GPIO_LED2 = { .port = (void*)LED2_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED2_Pin) };
+gpio_pin_t GPIO_LED3 = { .port = (void*)LED3_GPIO_Port, .pin = GPIO_PIN_TO_NUM(LED3_Pin) };
 
-const gpio_pin_t GPIO_BTN_KEY1_SET = { .port = (void*)KEY1_SET_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_SET_Pin) };
-const gpio_pin_t GPIO_BTN_KEY1_EXIT = { .port = (void*)KEY1_EXIT_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_EXIT_Pin) };
-const gpio_pin_t GPIO_BTN_KEY1_UP = { .port = (void*)KEY1_UP_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_UP_Pin) };
-const gpio_pin_t GPIO_BTN_KEY1_DOWN = { .port = (void*)KEY1_DOWN_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_DOWN_Pin) };
-const gpio_pin_t GPIO_BTN_KEY2_SET = { .port = (void*)KEY2_SET_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_SET_Pin) };
-const gpio_pin_t GPIO_BTN_KEY2_UP = { .port = (void*)KEY2_UP_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_UP_Pin) };
-const gpio_pin_t GPIO_BTN_KEY2_DOWN = { .port = (void*)KEY2_DOWN_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_DOWN_Pin) };
+gpio_pin_t GPIO_BTN_KEY1_SET = { .port = (void*)KEY1_SET_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_SET_Pin) };
+gpio_pin_t GPIO_BTN_KEY1_EXIT = { .port = (void*)KEY1_EXIT_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_EXIT_Pin) };
+gpio_pin_t GPIO_BTN_KEY1_UP = { .port = (void*)KEY1_UP_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_UP_Pin) };
+gpio_pin_t GPIO_BTN_KEY1_DOWN = { .port = (void*)KEY1_DOWN_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY1_DOWN_Pin) };
+gpio_pin_t GPIO_BTN_KEY2_SET = { .port = (void*)KEY2_SET_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_SET_Pin) };
+gpio_pin_t GPIO_BTN_KEY2_UP = { .port = (void*)KEY2_UP_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_UP_Pin) };
+gpio_pin_t GPIO_BTN_KEY2_DOWN = { .port = (void*)KEY2_DOWN_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_DOWN_Pin) };
 
 /* Private function prototypes -----------------------------------------------*/
 

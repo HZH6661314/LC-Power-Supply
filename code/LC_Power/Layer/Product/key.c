@@ -121,7 +121,7 @@ void Button_Process_Engine(Button_t *btn)
 
     switch (btn->state) {
         case KEY_STATE_IDLE:
-            if (current_level == LEVEL_LOW) 
+            if (current_level == PIN_LOW) 
             {
                 btn->state = KEY_STATE_DEBOUNCE;
                 btn->press_timestamp = g_Ticks[TICK_MS].Tick(); // 记录自己的时间戳
@@ -131,7 +131,7 @@ void Button_Process_Engine(Button_t *btn)
         case KEY_STATE_DEBOUNCE:
             if ((g_Ticks[TICK_MS].Tick() - btn->press_timestamp) >= KEY_DEBOUNCE_TIME)
             {
-                if (current_level == LEVEL_LOW)
+                if (current_level == PIN_LOW)
                 {
                     btn->state = KEY_STATE_PRESS_DETECT;
                 }
@@ -144,9 +144,9 @@ void Button_Process_Engine(Button_t *btn)
             break;
             
         case KEY_STATE_PRESS_DETECT:
-             // 重点：判断出长按或短按后，不要在这里直接调用 UI 函数！
+             // 重点：判断出长按或短按后，不要在这里直接调用函数！
              // 而是生成一个“事件”推送到队列里。
-             if (current_level == LEVEL_LOW) 
+             if (current_level == PIN_LOW) 
              {
                 if ((g_Ticks[TICK_MS].Tick() - btn->press_timestamp) >= KEY_LONG_PRESS_TIME) 
                 {
@@ -161,7 +161,7 @@ void Button_Process_Engine(Button_t *btn)
              break;
         
         case KEY_STATE_LONG_PRESS:
-            if (current_level == LEVEL_LOW) 
+            if (current_level == PIN_LOW) 
             {
                 Push_Event_To_Queue(btn->id, BTN_EVENT_LONG_PRESS);
                 btn->press_timestamp = g_Ticks[TICK_MS].Tick(); // 记录自己的时间戳
@@ -172,7 +172,7 @@ void Button_Process_Engine(Button_t *btn)
         case KEY_STATE_RELEASE_DEBOUNCE:
             if ((g_Ticks[TICK_MS].Tick() - btn->press_timestamp) >= KEY_DEBOUNCE_TIME) 
             {
-                if (current_level == LEVEL_HIGH) 
+                if (current_level == PIN_HIGH) 
                 {
                     btn->state = KEY_STATE_IDLE;
                 }
