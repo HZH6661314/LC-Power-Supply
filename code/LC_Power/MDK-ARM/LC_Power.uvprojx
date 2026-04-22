@@ -615,24 +615,9 @@
           <GroupName>Driver</GroupName>
           <Files>
             <File>
-              <FileName>1.54TFT.c</FileName>
+              <FileName>tft_driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Layer\Driver\1.54TFT.c</FilePath>
-            </File>
-            <File>
-              <FileName>tft_dashboard.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Layer\Driver\tft_dashboard.c</FilePath>
-            </File>
-            <File>
-              <FileName>tft_gfx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Layer\Driver\tft_gfx.c</FilePath>
-            </File>
-            <File>
-              <FileName>tft_selftest.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Layer\Driver\tft_selftest.c</FilePath>
+              <FilePath>..\Layer\Driver\tft_driver.c</FilePath>
             </File>
             <File>
               <FileName>temp_sensor.c</FileName>
@@ -643,11 +628,6 @@
               <FileName>W25Q256.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Driver\W25Q256.c</FilePath>
-            </File>
-            <File>
-              <FileName>W25Q256.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Layer\Driver\W25Q256.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -673,6 +653,11 @@
               <FileName>bsp_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Layer\Bsp\bsp_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Layer\Bsp\bsp_lcd.c</FilePath>
             </File>
           </Files>
         </Group>

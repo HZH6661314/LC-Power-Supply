@@ -78,13 +78,9 @@ virtualFolder:
       folders: []
     - name: Driver
       files:
-        - path: ../Layer/Driver/1.54TFT.c
-        - path: ../Layer/Driver/tft_dashboard.c
-        - path: ../Layer/Driver/tft_gfx.c
-        - path: ../Layer/Driver/tft_selftest.c
+        - path: ../Layer/Driver/tft_driver.c
         - path: ../Layer/Driver/temp_sensor.c
         - path: ../Layer/Driver/W25Q256.c
-        - path: ../Layer/Driver/W25Q256.h
       folders: []
     - name: Bsp
       files:
@@ -92,6 +88,7 @@ virtualFolder:
         - path: ../Layer/Bsp/bsp_gpio.c
         - path: ../Layer/Bsp/bsp_hrtim.c
         - path: ../Layer/Bsp/bsp_spi.c
+        - path: ../Layer/Bsp/bsp_lcd.c
       folders: []
     - name: Middlewares
       files: []
@@ -280,4 +277,4 @@ targets:
         bin: ""
         interface: cmsis-dap
         target: stm32f3x
-    uploader: OpenOCD
+    uploader: JLink

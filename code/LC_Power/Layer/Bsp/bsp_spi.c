@@ -2,207 +2,175 @@
 /**
   ******************************************************************************
   * @file           : bsp_spi.c
-  * @brief          : BSP SPI implementation file.
-  *                   This file contains SPI transfer service stubs.
+  * @brief          : BSP SPI implementation - 借鉴开源项目的优雅设计
+  *                   参考：RT-Thread SPI框架 + Zephyr SPI API
   ******************************************************************************
   * @attention
   *
   * Author: LCYX
+  *
+  * 设计亮点：
+  * 1. 使用操作集（ops）实现平台抽象
+  * 2. 应用层代码完全平台无关
+  * 3. 换芯片只需修改操作集的实现
   *
   ******************************************************************************
   */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#define STM32_PLATFORM  // 定义当前平台
 #include "bsp_spi.h"
-#include "main.h"  // 包含GPIO引脚定义
+#include "main.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+/* Private macros ------------------------------------------------------------*/
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
+// 将GPIO_PIN_x位掩码转换为引脚号的宏（编译时计算）
+#define GPIO_PIN_TO_NUM(pin) ( \
+    (pin) == 0x0001 ? 0 : \
+    (pin) == 0x0002 ? 1 : \
+    (pin) == 0x0004 ? 2 : \
+    (pin) == 0x0008 ? 3 : \
+    (pin) == 0x0010 ? 4 : \
+    (pin) == 0x0020 ? 5 : \
+    (pin) == 0x0040 ? 6 : \
+    (pin) == 0x0080 ? 7 : \
+    (pin) == 0x0100 ? 8 : \
+    (pin) == 0x0200 ? 9 : \
+    (pin) == 0x0400 ? 10 : \
+    (pin) == 0x0800 ? 11 : \
+    (pin) == 0x1000 ? 12 : \
+    (pin) == 0x2000 ? 13 : \
+    (pin) == 0x4000 ? 14 : \
+    (pin) == 0x8000 ? 15 : 0 \
+)
 
 /* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
 
-// 全局软件SPI接口（单例模式）
-static SoftSPI_t s_soft_spi;
+// SPI操作集（由底层驱动填充）
+static const struct spi_ops *g_spi_ops = NULL;
 
-/* USER CODE END PV */
+/* SPI设备定义（STM32平台） */
+spi_device_t SPI_W25Q256 = {
+    .sck = { .port = (void*)W25Q256_SCK_GPIO_Port, .pin = GPIO_PIN_TO_NUM(W25Q256_SCK_Pin) },
+    .mosi = { .port = (void*)W25Q256_MOSI_GPIO_Port, .pin = GPIO_PIN_TO_NUM(W25Q256_MOSI_Pin) },
+    .miso = { .port = (void*)W25Q256_MISO_GPIO_Port, .pin = GPIO_PIN_TO_NUM(W25Q256_MISO_Pin) },
+    .cs = { .port = (void*)W25Q256_CS_GPIO_Port, .pin = GPIO_PIN_TO_NUM(W25Q256_CS_Pin) },
+    .delay_cycles = 10  // 约0.14us延时（72MHz）
+};
 
 /* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
 
-// ========== STM32平台相关的GPIO操作函数 ==========
-// 注意：这些函数是平台相关的，换芯片时需要修改
+// ========== STM32平台的SPI操作集实现 ==========
+// 换芯片时只需修改这3个函数！
 
-static void W25Q256_SCK_SetHigh(void) {
-    HAL_GPIO_WritePin(W25Q256_SCK_GPIO_Port, W25Q256_SCK_Pin, GPIO_PIN_SET);
+static void stm32_spi_pin_set(const spi_pin_t *pin, uint8_t value)
+{
+    GPIO_TypeDef *port = (GPIO_TypeDef *)pin->port;
+    uint16_t gpio_pin = (1 << pin->pin);
+    HAL_GPIO_WritePin(port, gpio_pin, value ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
-static void W25Q256_SCK_SetLow(void) {
-    HAL_GPIO_WritePin(W25Q256_SCK_GPIO_Port, W25Q256_SCK_Pin, GPIO_PIN_RESET);
+static uint8_t stm32_spi_pin_get(const spi_pin_t *pin)
+{
+    GPIO_TypeDef *port = (GPIO_TypeDef *)pin->port;
+    uint16_t gpio_pin = (1 << pin->pin);
+    return (HAL_GPIO_ReadPin(port, gpio_pin) == GPIO_PIN_SET) ? 1 : 0;
 }
 
-static void W25Q256_MOSI_SetHigh(void) {
-    HAL_GPIO_WritePin(W25Q256_MOSI_GPIO_Port, W25Q256_MOSI_Pin, GPIO_PIN_SET);
-}
-
-static void W25Q256_MOSI_SetLow(void) {
-    HAL_GPIO_WritePin(W25Q256_MOSI_GPIO_Port, W25Q256_MOSI_Pin, GPIO_PIN_RESET);
-}
-
-static uint8_t W25Q256_MISO_Read(void) {
-    return (HAL_GPIO_ReadPin(W25Q256_MISO_GPIO_Port, W25Q256_MISO_Pin) == GPIO_PIN_SET) ? 1 : 0;
-}
-
-static void W25Q256_CS_SetHigh(void) {
-    HAL_GPIO_WritePin(W25Q256_CS_GPIO_Port, W25Q256_CS_Pin, GPIO_PIN_SET);
-}
-
-static void W25Q256_CS_SetLow(void) {
-    HAL_GPIO_WritePin(W25Q256_CS_GPIO_Port, W25Q256_CS_Pin, GPIO_PIN_RESET);
-}
-
-// 简单的延时函数（空循环，不用HAL_Delay）
-static inline void SoftSPI_Delay(uint32_t cycles) {
+static void stm32_spi_delay(uint32_t cycles)
+{
     for (volatile uint32_t i = 0; i < cycles; i++) {
         __NOP();  // 空操作，防止编译器优化
     }
 }
 
-/* USER CODE END PFP */
+// STM32平台的操作集
+static const struct spi_ops stm32_spi_ops = {
+    .pin_set = stm32_spi_pin_set,
+    .pin_get = stm32_spi_pin_get,
+    .delay = stm32_spi_delay,
+};
 
 /* Exported functions --------------------------------------------------------*/
 
 /**
- * @brief  初始化软件SPI（绑定虚函数指针）
- * @note   这是BSP层的核心：将平台相关的GPIO函数绑定到虚函数指针
- *         换芯片时只需修改这个函数的实现
+ * @brief  初始化SPI子系统
+ * @note   注册平台相关的操作集
  */
 void BSP_SPI_Init(void)
 {
-  /* USER CODE BEGIN BSP_SPI_Init */
+    // 注册STM32的SPI操作集
+    g_spi_ops = &stm32_spi_ops;
 
-  // 绑定SCK引脚的虚函数
-  s_soft_spi.SCK.SetHigh = W25Q256_SCK_SetHigh;
-  s_soft_spi.SCK.SetLow  = W25Q256_SCK_SetLow;
-  s_soft_spi.SCK.Read    = NULL;  // SCK不需要读取
-
-  // 绑定MOSI引脚的虚函数
-  s_soft_spi.MOSI.SetHigh = W25Q256_MOSI_SetHigh;
-  s_soft_spi.MOSI.SetLow  = W25Q256_MOSI_SetLow;
-  s_soft_spi.MOSI.Read    = NULL;  // MOSI不需要读取
-
-  // 绑定MISO引脚的虚函数
-  s_soft_spi.MISO.SetHigh = NULL;  // MISO不需要写入
-  s_soft_spi.MISO.SetLow  = NULL;
-  s_soft_spi.MISO.Read    = W25Q256_MISO_Read;
-
-  // 绑定CS引脚的虚函数
-  s_soft_spi.CS.SetHigh = W25Q256_CS_SetHigh;
-  s_soft_spi.CS.SetLow  = W25Q256_CS_SetLow;
-  s_soft_spi.CS.Read    = NULL;  // CS不需要读取
-
-  // 设置延时周期（根据MCU频率调整，这里假设72MHz）
-  s_soft_spi.delay_cycles = 10;  // 约0.14us延时
-
-  // 初始化引脚状态
-  s_soft_spi.SCK.SetLow();   // SCK默认低电平（SPI Mode 0）
-  s_soft_spi.CS.SetHigh();   // CS默认高电平（未选中）
-
-  /* USER CODE END BSP_SPI_Init */
+    // 初始化引脚状态
+    g_spi_ops->pin_set(&SPI_W25Q256.sck, 0);   // SCK默认低电平（SPI Mode 0）
+    g_spi_ops->pin_set(&SPI_W25Q256.cs, 1);    // CS默认高电平（未选中）
 }
 
-/**
- * @brief  获取软件SPI抽象接口
- * @note   Driver层通过这个函数获取SPI接口
- * @retval 软件SPI抽象接口指针
- */
-SoftSPI_t* BSP_SPI_GetInterface(void)
-{
-    return &s_soft_spi;
-}
-
-/* USER CODE BEGIN 1 */
-
-// ========== 通用的软件SPI实现（完全可移植，不依赖任何硬件）==========
+// ========== 平台无关的SPI操作函数 ==========
 
 /**
- * @brief  软件SPI传输一个字节（同时发送和接收）
- * @note   这个函数只调用虚函数指针，完全可移植
- *         SPI Mode 0: CPOL=0, CPHA=0（时钟空闲为低，第一个边沿采样）
- * @param  spi: 软件SPI接口指针
- * @param  data: 要发送的字节
- * @retval 接收到的字节
+ * @brief  SPI传输一个字节（同时发送和接收）
+ * @note   SPI Mode 0: CPOL=0, CPHA=0（时钟空闲为低，第一个边沿采样）
  */
-uint8_t SoftSPI_TransferByte(SoftSPI_t *spi, uint8_t data)
+uint8_t SPI_TransferByte(const spi_device_t *dev, uint8_t data)
 {
     uint8_t recv = 0;
 
     for (uint8_t i = 0; i < 8; i++) {
         // 发送数据（MSB先发送）
         if (data & 0x80) {
-            spi->MOSI.SetHigh();
+            g_spi_ops->pin_set(&dev->mosi, 1);
         } else {
-            spi->MOSI.SetLow();
+            g_spi_ops->pin_set(&dev->mosi, 0);
         }
         data <<= 1;
 
-        SoftSPI_Delay(spi->delay_cycles);
+        g_spi_ops->delay(dev->delay_cycles);
 
         // 时钟上升沿
-        spi->SCK.SetHigh();
+        g_spi_ops->pin_set(&dev->sck, 1);
 
-        SoftSPI_Delay(spi->delay_cycles);
+        g_spi_ops->delay(dev->delay_cycles);
 
         // 读取数据（在时钟高电平期间采样）
         recv <<= 1;
-        if (spi->MISO.Read()) {
+        if (g_spi_ops->pin_get(&dev->miso)) {
             recv |= 0x01;
         }
 
         // 时钟下降沿
-        spi->SCK.SetLow();
+        g_spi_ops->pin_set(&dev->sck, 0);
     }
 
     return recv;
 }
 
 /**
- * @brief  软件SPI发送一个字节
- * @param  spi: 软件SPI接口指针
- * @param  data: 要发送的字节
- * @retval None
+ * @brief  SPI发送一个字节
  */
-void SoftSPI_WriteByte(SoftSPI_t *spi, uint8_t data)
+void SPI_WriteByte(const spi_device_t *dev, uint8_t data)
 {
-    (void)SoftSPI_TransferByte(spi, data);
+    (void)SPI_TransferByte(dev, data);
 }
 
 /**
- * @brief  软件SPI接收一个字节
- * @param  spi: 软件SPI接口指针
- * @retval 接收到的字节
+ * @brief  SPI接收一个字节
  */
-uint8_t SoftSPI_ReadByte(SoftSPI_t *spi)
+uint8_t SPI_ReadByte(const spi_device_t *dev)
 {
-    return SoftSPI_TransferByte(spi, 0xFF);  // 发送0xFF作为dummy数据
+    return SPI_TransferByte(dev, 0xFF);  // 发送0xFF作为dummy数据
 }
 
-/* USER CODE END 1 */
+/**
+ * @brief  SPI片选控制
+ */
+void SPI_CS_Control(const spi_device_t *dev, uint8_t select)
+{
+    if (select) {
+        g_spi_ops->pin_set(&dev->cs, 0);  // 选中（拉低）
+    } else {
+        g_spi_ops->pin_set(&dev->cs, 1);  // 释放（拉高）
+    }
+}

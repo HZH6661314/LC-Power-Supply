@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "1.54TFT.h"
+#include "tft_driver.h"
 
 void TFTGFX_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
 void TFTGFX_DrawRect(int16_t x, int16_t y, int16_t width, int16_t height, uint16_t color);
