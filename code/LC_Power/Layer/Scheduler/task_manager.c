@@ -114,11 +114,6 @@ void Hardware_Init()
 
 }
 
-void Power_Control_Init()
-{
-
-}
-
 void BSP_Init()
 {
 	BSP_GPIO_Init();
@@ -126,6 +121,9 @@ void BSP_Init()
 	// 初始化LCD BSP层
     BSP_LCD_Init();
 	
+    BSP_ADC_Init();
+    
+    BSP_HRTIM_Init();
 	
 	s_LastTick_1ms = g_Ticks[TICK_MS].Tick();
 	s_LastTick_10ms = g_Ticks[TICK_MS].Tick();

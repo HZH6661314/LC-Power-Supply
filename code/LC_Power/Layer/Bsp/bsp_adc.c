@@ -15,6 +15,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "bsp_adc.h"
+#include "main.h"
+#include "adc.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -38,6 +40,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+__IO uint32_t adcValue[ADC_CHANNEL_MAX];
 
 /* USER CODE END PV */
 
@@ -51,16 +54,65 @@ void BSP_ADC_Init(void)
 {
   /* USER CODE BEGIN BSP_ADC_Init */
   
+    // 1. 极其关键的“开机自检”：硬件自校准！
+    // 抵消芯片出厂和温度变化带来的零点漂移，对电源的高精度采样至关重要
+    if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    // 2. 启动注入通道，并开启中断（极速域的入口）
+    // 执行完这句后，ADC 就进入了“挂起”状态，死死盯着 HRTIM 的触发信号
+    if (HAL_ADCEx_InjectedStart_IT(&hadc1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    // 校准ADC2
+    if (HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    // 启动ADC2注入通道
+    if (HAL_ADCEx_InjectedStart_IT(&hadc2) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+
+    adcValue[ADC_VIN] = READ_REG(hadc1.Instance->JDR1); // ADC_VIN
+    adcValue[ADC_IIN] = READ_REG(hadc1.Instance->JDR2); // ADC_IIN
+    adcValue[ADC_VOUT] = READ_REG(hadc1.Instance->JDR3); // ADC_VOUT
+    adcValue[ADC_IOUT] = READ_REG(hadc1.Instance->JDR4); // ADC_IOUT
+
+    adcValue[ADC_TEMP] = READ_REG(hadc2.Instance->JDR1); // ADC_TEMP
+    adcValue[ADC_VREF] = READ_REG(hadc2.Instance->JDR2); // ADC_VREF
   /* USER CODE END BSP_ADC_Init */
 }
 
 void BSP_ADC_Process(void)
 {
   /* USER CODE BEGIN BSP_ADC_Process */
-  /* Handle ADC polling/DMA updates and data post-processing here. */
+  
   /* USER CODE END BSP_ADC_Process */
 }
 
 /* USER CODE BEGIN 1 */
+float Get_VIN(void)
+{
+    return adcValue[ADC_VIN]/4096.0f * 3.3f * 16.0f; // 计算输入电压
+}
 
+float Get_IIN(void)
+{
+    return (adcValue[ADC_IIN]/4096.0f * 3.3f - 1.65f) * 10.0f; // 输入电流
+}
+
+float Get_VOUT(void)
+{
+    return adcValue[ADC_VOUT]/4096.0f * 3.3f * 16.0f; // 输出电压
+}
+
+float Get_IOUT(void)
+{
+    return (adcValue[ADC_IOUT]/4096.0f * 3.3f - 1.65f) * 10.0f; // 输出电流
+}
 /* USER CODE END 1 */

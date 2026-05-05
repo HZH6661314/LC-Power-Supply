@@ -72,9 +72,9 @@ virtualFolder:
       folders: []
     - name: Control
       files:
-        - path: ../Layer/Control/pid_voltage.c
-        - path: ../Layer/Control/2p2z_current.c
         - path: ../Layer/Control/filter.c
+        - path: ../Layer/Control/power_control.c
+        - path: ../Layer/Control/power_control.h
       folders: []
     - name: Driver
       files:

@@ -64,6 +64,8 @@ gpio_pin_t GPIO_BTN_KEY2_SET = { .port = (void*)KEY2_SET_GPIO_Port, .pin = GPIO_
 gpio_pin_t GPIO_BTN_KEY2_UP = { .port = (void*)KEY2_UP_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_UP_Pin) };
 gpio_pin_t GPIO_BTN_KEY2_DOWN = { .port = (void*)KEY2_DOWN_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_DOWN_Pin) };
 
+gpio_pin_t GPIO_OUT_CTRL_Pin = { .port = (void*)DC_OUT_CTRL_GPIO_Port, .pin = GPIO_PIN_TO_NUM(DC_OUT_CTRL_Pin) };  // 复用SET引脚
+
 /* Private function prototypes -----------------------------------------------*/
 
 // ========== STM32平台的GPIO操作集实现 ==========
@@ -180,11 +182,13 @@ uint8_t Drv_Btn_Read_EXIT(void)
 void Drv_LED0_ON(void)
 {
     gpio_pin_write(&GPIO_LED0, PIN_LOW);  // 低电平点亮
+    gpio_pin_write(&GPIO_OUT_CTRL_Pin, PIN_HIGH);  // 同时控制输出使能引脚，确保LED完全点亮
 }
 
 void Drv_LED0_OFF(void)
 {
     gpio_pin_write(&GPIO_LED0, PIN_HIGH);  // 高电平熄灭
+    gpio_pin_write(&GPIO_OUT_CTRL_Pin, PIN_LOW);  // 同时控制输出使能引脚，确保LED完全关闭
 }
 
 void Drv_LED0_Toggle(void)

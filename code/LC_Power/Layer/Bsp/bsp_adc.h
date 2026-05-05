@@ -29,7 +29,15 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef enum {
+    ADC_VIN = 0,
+    ADC_IIN,
+    ADC_VOUT,
+    ADC_IOUT,
+    ADC_TEMP,
+    ADC_VREF,
+    ADC_CHANNEL_MAX
+} ADC_ID_t;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
