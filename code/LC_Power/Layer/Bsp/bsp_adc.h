@@ -54,13 +54,24 @@ typedef enum {
 void BSP_ADC_Init(void);
 void BSP_ADC_Process(void);
 
+float Get_VIN(void);
+float Get_IIN(void);
+float Get_VOUT(void);
+float Get_IOUT(void);
+
+
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
-
+#define ADC_VIN_VALUE READ_REG(hadc1.Instance->JDR1)
+#define ADC_IIN_VALUE READ_REG(hadc1.Instance->JDR2)
+#define ADC_VOUT_VALUE READ_REG(hadc1.Instance->JDR3)
+#define ADC_IOUT_VALUE READ_REG(hadc1.Instance->JDR4)
+#define ADC_TEMP_VALUE READ_REG(hadc2.Instance->JDR1)
+#define ADC_VREF_VALUE READ_REG(hadc2.Instance->JDR2)
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

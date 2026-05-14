@@ -50,6 +50,7 @@ Tick_t g_Ticks[TICK_MAX] = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
+static uint16_t BSP_HRTIM_ClampDuty(uint16_t duty);
 
 /* USER CODE END PFP */
 
@@ -57,12 +58,12 @@ Tick_t g_Ticks[TICK_MAX] = {
 void BSP_HRTIM_Init(void)
 {
   /* USER CODE BEGIN BSP_HRTIM_Init */
-	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP1xR = 5760-2880;
-	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP2xR = 5760+2880;
+	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP1xR = 5760-1728;
+	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP2xR = 5760+1728;
 	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP3xR = 5760;
 	
-	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP1xR = 5760-5529;
-	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP2xR = 5760+5529;
+	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP1xR = 5760-1728;
+	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP2xR = 5760+1728;
 	HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP3xR = 5760;
 	
 	SET_BIT(HRTIM1->sCommonRegs.CR2, HRTIM_CR2_TASWU | HRTIM_CR2_TBSWU | HRTIM_CR2_MSWU);
@@ -85,5 +86,30 @@ void BSP_HRTIM_Process(void)
 }
 
 /* USER CODE BEGIN 1 */
+static uint16_t BSP_HRTIM_ClampDuty(uint16_t duty)
+{
+    if (duty > BSP_HRTIM_DUTY_MAX) {
+        return BSP_HRTIM_DUTY_MAX;
+    }
+
+    return duty;
+}
+
+void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty)
+{
+    uint16_t limited_duty = BSP_HRTIM_ClampDuty(duty);
+    uint16_t cmp_low = (uint16_t)(BSP_HRTIM_DUTY_CENTER - limited_duty);
+    uint16_t cmp_high = (uint16_t)(BSP_HRTIM_DUTY_CENTER + limited_duty);
+
+    HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP1xR = cmp_low;
+    HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP2xR = cmp_high;
+    HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].CMP3xR = BSP_HRTIM_DUTY_CENTER;
+
+    HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP1xR = cmp_low;
+    HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP2xR = cmp_high;
+    HRTIM1->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].CMP3xR = BSP_HRTIM_DUTY_CENTER;
+
+    SET_BIT(HRTIM1->sCommonRegs.CR2, HRTIM_CR2_TASWU | HRTIM_CR2_TBSWU | HRTIM_CR2_MSWU);
+}
 
 /* USER CODE END 1 */

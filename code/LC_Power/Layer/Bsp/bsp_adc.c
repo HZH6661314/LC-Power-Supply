@@ -40,7 +40,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-__IO uint32_t adcValue[ADC_CHANNEL_MAX];
+float g_adcValue[ADC_CHANNEL_MAX];
 
 /* USER CODE END PV */
 
@@ -78,41 +78,35 @@ void BSP_ADC_Init(void)
     }
 
 
-    adcValue[ADC_VIN] = READ_REG(hadc1.Instance->JDR1); // ADC_VIN
-    adcValue[ADC_IIN] = READ_REG(hadc1.Instance->JDR2); // ADC_IIN
-    adcValue[ADC_VOUT] = READ_REG(hadc1.Instance->JDR3); // ADC_VOUT
-    adcValue[ADC_IOUT] = READ_REG(hadc1.Instance->JDR4); // ADC_IOUT
-
-    adcValue[ADC_TEMP] = READ_REG(hadc2.Instance->JDR1); // ADC_TEMP
-    adcValue[ADC_VREF] = READ_REG(hadc2.Instance->JDR2); // ADC_VREF
+    
   /* USER CODE END BSP_ADC_Init */
 }
 
 void BSP_ADC_Process(void)
 {
   /* USER CODE BEGIN BSP_ADC_Process */
-  
+
   /* USER CODE END BSP_ADC_Process */
 }
 
 /* USER CODE BEGIN 1 */
 float Get_VIN(void)
 {
-    return adcValue[ADC_VIN]/4096.0f * 3.3f * 16.0f; // 计算输入电压
+    return ADC_VIN_VALUE/4096.0f * 3.3f * 16.0f; // 计算输入电压
 }
 
 float Get_IIN(void)
 {
-    return (adcValue[ADC_IIN]/4096.0f * 3.3f - 1.65f) * 10.0f; // 输入电流
+    return (ADC_IIN_VALUE/4096.0f * 3.3f - 1.65f) * 10.0f; // 输入电流
 }
 
 float Get_VOUT(void)
 {
-    return adcValue[ADC_VOUT]/4096.0f * 3.3f * 16.0f; // 输出电压
+    return ADC_VOUT_VALUE/4096.0f * 3.3f * 16.0f; // 输出电压
 }
 
 float Get_IOUT(void)
 {
-    return (adcValue[ADC_IOUT]/4096.0f * 3.3f - 1.65f) * 10.0f; // 输出电流
+    return (ADC_IOUT_VALUE/4096.0f * 3.3f - 1.65f) * 10.0f; // 输出电流
 }
 /* USER CODE END 1 */

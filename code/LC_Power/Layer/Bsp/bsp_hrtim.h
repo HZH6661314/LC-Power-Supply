@@ -58,10 +58,14 @@ void BSP_HRTIM_Process(void);
 
 /* USER CODE BEGIN EFP */
 extern Tick_t g_Ticks[TICK_MAX];
+void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
+#define BSP_HRTIM_DUTY_MAX      (5760U)
+#define BSP_HRTIM_DUTY_CENTER   (5760U)
+#define BSP_HRTIM_PERIOD_TICKS  (11520U)
 
 /* USER CODE END Private defines */
 

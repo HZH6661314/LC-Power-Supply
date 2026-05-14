@@ -23,8 +23,10 @@
 #include "tft_driver.h"
 #include "tft_dashboard.h"
 #include "state_machine.h"
+#include "bsp_adc.h"
 #include "bsp_lcd.h"
 #include "bsp_hrtim.h"
+#include "power_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +63,7 @@ void SysCore_Init()
     // 初始化BSP层
     BSP_Init();
 
+	Power_Control_Init();
 	Hardware_Init();
 
     // 注意：TFT初始化会在SysCore_Run()中完成，不会阻塞这里
@@ -81,7 +84,7 @@ void SysCore_Run()
 
 	if ((currentTick - s_LastTick_1ms) >= 1U) {      // 1ms通道处理最基本的任务，如PWM输出，ADC采样
         s_LastTick_1ms = currentTick;
-
+        
         StateMachine_Task();
     }
 

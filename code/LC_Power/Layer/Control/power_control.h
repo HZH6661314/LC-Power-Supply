@@ -24,10 +24,16 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdint.h>
 
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+typedef enum {
+    POWER_CONTROL_MODE_CV = 0U,
+    POWER_CONTROL_MODE_CC = 1U
+} PowerControlMode_t;
 
 /* USER CODE END Includes */
 

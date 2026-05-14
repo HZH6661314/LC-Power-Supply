@@ -23,6 +23,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
+#include <stdint.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -31,13 +32,6 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef signed char int8_t;
-typedef signed short int16_t;
-typedef signed int int32_t;
-
 // 状态接口定义
 typedef struct {
     void (*Enter)(void);  // 进入函数指针
