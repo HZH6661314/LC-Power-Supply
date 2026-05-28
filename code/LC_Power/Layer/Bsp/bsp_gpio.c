@@ -65,7 +65,7 @@ gpio_pin_t GPIO_BTN_KEY2_UP = { .port = (void*)KEY2_UP_GPIO_Port, .pin = GPIO_PI
 gpio_pin_t GPIO_BTN_KEY2_DOWN = { .port = (void*)KEY2_DOWN_GPIO_Port, .pin = GPIO_PIN_TO_NUM(KEY2_DOWN_Pin) };
 
 gpio_pin_t GPIO_OUT_CTRL_Pin = { .port = (void*)DC_OUT_CTRL_GPIO_Port, .pin = GPIO_PIN_TO_NUM(DC_OUT_CTRL_Pin) };  // 复用SET引脚
-
+gpio_pin_t GPIO_FAN_PWM_Pin = { .port = (void*)FAN_PWM_GPIO_Port, .pin = GPIO_PIN_TO_NUM(FAN_PWM_Pin) };  // 风扇PWM引脚    
 /* Private function prototypes -----------------------------------------------*/
 
 // ========== STM32平台的GPIO操作集实现 ==========
@@ -183,12 +183,14 @@ void Drv_LED0_ON(void)
 {
     gpio_pin_write(&GPIO_LED0, PIN_LOW);  // 低电平点亮
     gpio_pin_write(&GPIO_OUT_CTRL_Pin, PIN_HIGH);  // 同时控制输出使能引脚，确保LED完全点亮
+    gpio_pin_write(&GPIO_FAN_PWM_Pin, PIN_HIGH);  // 风扇引脚保持高电平，确保风扇开启
 }
 
 void Drv_LED0_OFF(void)
 {
     gpio_pin_write(&GPIO_LED0, PIN_HIGH);  // 高电平熄灭
     gpio_pin_write(&GPIO_OUT_CTRL_Pin, PIN_LOW);  // 同时控制输出使能引脚，确保LED完全关闭
+    gpio_pin_write(&GPIO_FAN_PWM_Pin, PIN_LOW);  // 风扇引脚保持低电平，确保风扇关闭
 }
 
 void Drv_LED0_Toggle(void)

@@ -63,7 +63,7 @@ void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
-#define BSP_HRTIM_DUTY_MAX      (5760U)
+#define BSP_HRTIM_DUTY_MAX      (5560U)
 #define BSP_HRTIM_DUTY_CENTER   (5760U)
 #define BSP_HRTIM_PERIOD_TICKS  (11520U)
 

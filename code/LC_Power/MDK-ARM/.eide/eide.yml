@@ -25,6 +25,7 @@ virtualFolder:
                 - path: ../Core/Src/main.c
                 - path: ../Core/Src/gpio.c
                 - path: ../Core/Src/adc.c
+                - path: ../Core/Src/dma.c
                 - path: ../Core/Src/hrtim.c
                 - path: ../Core/Src/tim.c
                 - path: ../Core/Src/stm32f3xx_it.c
@@ -133,7 +134,8 @@ targets:
         - RTE/_LC_Power
       libList: []
     excludeList: []
-    settings: {}
+    settings:
+      debugger: cortex-debug
     toolchain: AC5
     toolchainConfigMap:
       AC5:
@@ -151,7 +153,7 @@ targets:
             C_FLAGS: --diag_suppress=1 --diag_suppress=1295
             c99-mode: true
             one-elf-section-per-function: true
-            optimization: level-3
+            optimization: level-0
             warnings: all-warnings
           global:
             output-debug-info: enable

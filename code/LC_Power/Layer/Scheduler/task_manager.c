@@ -23,6 +23,7 @@
 #include "tft_driver.h"
 #include "tft_dashboard.h"
 #include "state_machine.h"
+#include "bsp_gpio.h"
 #include "bsp_adc.h"
 #include "bsp_lcd.h"
 #include "bsp_hrtim.h"
@@ -71,7 +72,8 @@ void SysCore_Init()
 
 void SysCore_Run()
 {
-	uint32_t currentTick = g_Ticks[TICK_MS].Tick();
+	volatile uint32_t currentTick = g_Ticks[TICK_MS].Tick();
+	
 
 	// TFT初始化状态机（非阻塞）
 	if (!s_TFT_Initialized) {

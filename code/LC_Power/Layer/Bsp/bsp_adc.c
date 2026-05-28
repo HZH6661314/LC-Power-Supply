@@ -40,7 +40,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-float g_adcValue[ADC_CHANNEL_MAX];
+
+ADC_Channel_Data_t g_adc_dma_buffer[DECIMATION_RATE] = {0};
+
+static float ADC_Value[ADC_CHANNEL_MAX] = {0}; // ADC 转换后的物理值，单位 V 或 A，根据通道不同而不同
+static float s_adc_cali[ADC_CHANNEL_MAX] = {0,0,0.137f,0.005f,0,0}; // ADC 校准值，单位与 ADC_Value 数组相同，初始值为0
 
 /* USER CODE END PV */
 
@@ -54,59 +58,58 @@ void BSP_ADC_Init(void)
 {
   /* USER CODE BEGIN BSP_ADC_Init */
   
-    // 1. 极其关键的“开机自检”：硬件自校准！
-    // 抵消芯片出厂和温度变化带来的零点漂移，对电源的高精度采样至关重要
-    if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
-    {
-        Error_Handler();
-    }
-    // 2. 启动注入通道，并开启中断（极速域的入口）
-    // 执行完这句后，ADC 就进入了“挂起”状态，死死盯着 HRTIM 的触发信号
-    if (HAL_ADCEx_InjectedStart_IT(&hadc1) != HAL_OK)
-    {
-        Error_Handler();
-    }
-    // 校准ADC2
-    if (HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED) != HAL_OK)
-    {
-        Error_Handler();
-    }
-    // 启动ADC2注入通道
-    if (HAL_ADCEx_InjectedStart_IT(&hadc2) != HAL_OK)
-    {
-        Error_Handler();
-    }
-
-
+  uint32_t dma_length = sizeof(g_adc_dma_buffer) / sizeof(uint32_t);
+  HAL_ADCEx_Calibration_Start(&hadc1,ADC_SINGLE_ENDED);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)g_adc_dma_buffer, dma_length);
     
+
   /* USER CODE END BSP_ADC_Init */
 }
 
 void BSP_ADC_Process(void)
 {
   /* USER CODE BEGIN BSP_ADC_Process */
-
+  uint32_t sum_vin = 0, sum_iin = 0, sum_vout = 0, sum_iout = 0;
+        
+  // 由于 ADC 是通过 DMA 直接搬运到内存的，所以我们在这里直接操作内存中的数据就好了，不需要再去读寄存器了。
+  ADC_Channel_Data_t *pData = g_adc_dma_buffer;
+  
+  // 由于 ADC 的采样频率非常高，我们需要通过累加器和计数器来进行“降频抽取”，以降低控制环路的频率到一个合理的范围。
+  for(uint8_t i = 0; i < DECIMATION_RATE; i++) {
+      sum_vin  += pData->vin;
+      sum_iin  += pData->iin;
+      sum_vout += pData->vout;
+      sum_iout += pData->iout;
+      
+      pData++; // 指针移动到下一个采样数据
+  }
+  
+  
+  ADC_Value[ADC_VIN]  = (sum_vin  / (float)DECIMATION_RATE) * VIN_COEF;
+  ADC_Value[ADC_IIN]  =  IIN_COEF((sum_iin  / (float)DECIMATION_RATE));
+  ADC_Value[ADC_VOUT] = (sum_vout / (float)DECIMATION_RATE) * VOUT_COEF;
+  ADC_Value[ADC_IOUT] =  IOUT_COEF((sum_iout / (float)DECIMATION_RATE));
   /* USER CODE END BSP_ADC_Process */
 }
 
 /* USER CODE BEGIN 1 */
 float Get_VIN(void)
 {
-    return ADC_VIN_VALUE/4096.0f * 3.3f * 16.0f; // 计算输入电压
+    return ADC_Value[ADC_VIN]+s_adc_cali[ADC_VIN]; // 获取输入电压
 }
 
 float Get_IIN(void)
 {
-    return (ADC_IIN_VALUE/4096.0f * 3.3f - 1.65f) * 10.0f; // 输入电流
+    return ADC_Value[ADC_IIN]+s_adc_cali[ADC_IIN]; // 获取输入电流
 }
 
 float Get_VOUT(void)
 {
-    return ADC_VOUT_VALUE/4096.0f * 3.3f * 16.0f; // 输出电压
+    return ADC_Value[ADC_VOUT]+s_adc_cali[ADC_VOUT]; // 获取输出电压
 }
 
 float Get_IOUT(void)
 {
-    return (ADC_IOUT_VALUE/4096.0f * 3.3f - 1.65f) * 10.0f; // 输出电流
+    return ADC_Value[ADC_IOUT]+s_adc_cali[ADC_IOUT]; // 获取输出电流
 }
 /* USER CODE END 1 */

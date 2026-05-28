@@ -36,6 +36,11 @@ extern "C" {
 
 /* 定义队列的最大容量（必须是确定的常数，工程上常用 2 的幂次方）*/
 #define QUEUE_MAX_SIZE 16
+
+#define POWER_VOL_MAX_LIMIT               (48.0f) // 物理最大电压限制，单位伏特
+#define POWER_VOL_MIN_LIMIT               (0.0f) // 物理最小电压限制，单位伏特
+#define POWER_CUR_MAX_LIMIT               (5.0f) // 物理最大电流限制，单位安培
+#define POWER_CUR_MIN_LIMIT               (0.0f)
 /* USER CODE END Private defines */
 
 /* Exported types ------------------------------------------------------------*/
@@ -118,6 +123,13 @@ void Key_Process(void);
 void Button_Process_Engine(Button_t *btn);
 uint8_t Push_Event_To_Queue(BtnId_t id, BtnEvent_t event);
 uint8_t Pop_Event_From_Queue(ButtonMsg_t *msg);
+
+float Get_TargetVoltageFinal(void);
+float Get_CurrentLimit(void);
+float Get_PowerLimit(void);
+
+void TargetVoltageFinal_ADD(void);
+void TargetVoltageFinal_SUB(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

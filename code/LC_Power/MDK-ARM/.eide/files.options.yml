@@ -17,4 +17,5 @@ version: "2.1"
 options:
     LC_Power:
         files: {}
-        virtualPathFiles: {}
+        virtualPathFiles:
+            <virtual_root>/Application/User/Core/dma.c: ""

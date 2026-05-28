@@ -22,6 +22,8 @@
 /* USER CODE BEGIN Includes */
 #include "bsp_adc.h"
 #include "bsp_hrtim.h"
+#include "bsp_gpio.h"
+#include "key.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,10 +34,20 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define POWER_CONTROL_DUTY_MAX          ((float)BSP_HRTIM_DUTY_MAX)
-#define POWER_CONTROL_DUTY_MIN          (0.0f)
+#define POWER_CONTROL_DUTY_MIN          (200.0f)
 #define POWER_CONTROL_DEFAULT_VOLTAGE   (0.0f)
 #define POWER_CONTROL_DEFAULT_CURRENT   (0.0f)
+#define POWER_CONTROL_DEFAULT_POWER     (100.0f)
 #define POWER_CONTROL_VOLTAGE_RAMP_STEP (0.1f)
+
+
+#define POWER_PID_VOL_KP           (24.0f)   //电压环比例系数
+#define POWER_PID_VOL_KI           (12.0f)   //电压环积分系数
+#define POWER_PID_VOL_KD           (0.0f)   //电压环微分系数
+#define POWER_PID_CUR_KP           (24.0f)   //电流环比例系数
+#define POWER_PID_CUR_KI           (12.0f)   //电流环积分系数
+#define POWER_PID_CUR_KD           (0.0f)   //电流环微分系数
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,15 +57,21 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-PID_TypeDef Voltage_Loop __attribute__((at(0x10000000)));
-PID_TypeDef Current_Loop __attribute__((at(0x10000040)));
+__attribute__((section(".ccmram"))) PID_TypeDef Voltage_Loop ;
+__attribute__((section(".ccmram"))) PID_TypeDef Current_Loop ;
 
 static float s_TargetVoltageFinal = POWER_CONTROL_DEFAULT_VOLTAGE;
 static float s_TargetVoltageRamp = POWER_CONTROL_DEFAULT_VOLTAGE;
 static float s_CurrentLimit = POWER_CONTROL_DEFAULT_CURRENT;
+static float s_PowerLimit = POWER_CONTROL_DEFAULT_POWER;
 static float s_VoltageRampStep = POWER_CONTROL_VOLTAGE_RAMP_STEP;
 static float s_LastDutyFinal = POWER_CONTROL_DUTY_MIN;
 static PowerControlMode_t s_ActiveMode = POWER_CONTROL_MODE_CV;
+
+static float I_cp = 5.0f; // 初始电流上限，单位安培
+
+// //ADC 中断频率极高，必须通过计数器进行“降频抽取”
+// static uint8_t decimation_cnt = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -69,42 +87,81 @@ static uint16_t Power_Control_DutyToTicks(float duty);
 void Power_Control_Init(void)
 {
   /* USER CODE BEGIN Power_Control_Init */
-  PID_Init(&Voltage_Loop, 0.1f, 0.0f, 0.0f, POWER_CONTROL_DUTY_MAX, POWER_CONTROL_DUTY_MIN);
-  PID_Init(&Current_Loop, 0.2f, 0.0f, 0.0f, POWER_CONTROL_DUTY_MAX, POWER_CONTROL_DUTY_MIN);
+  PID_Init(&Voltage_Loop, POWER_PID_VOL_KP, POWER_PID_VOL_KI, POWER_PID_VOL_KD, POWER_CONTROL_DUTY_MAX, POWER_CONTROL_DUTY_MIN);
+  PID_Init(&Current_Loop, POWER_PID_CUR_KP, POWER_PID_CUR_KI, POWER_PID_CUR_KD, POWER_CONTROL_DUTY_MAX, POWER_CONTROL_DUTY_MIN);
 
   Power_Control_ResetState();
   BSP_HRTIM_UpdateDutySymmetric(0U);
   /* USER CODE END Power_Control_Init */
 }
 
-void Power_Control_Process(void)
+/**
+ * @brief 电源控制主处理函数
+ * 
+ * 该函数实现电源的闭环控制逻辑，包括：
+ * 1. 获取目标电压和电流的实际值
+ * 2. 计算功率限制下的电流上限
+ * 3. 更新电压斜坡目标值
+ * 4. 分别计算电压环和电流环的PID输出
+ * 5. 根据CV(恒压)和CC(恒流)模式选择最终占空比
+ * 6. 更新HRTIM的占空比输出
+ * 
+ * 函数通过比较电压环和电流环的输出来自动切换工作模式：
+ * - 当电压环输出 <= 电流环输出时，工作在CV模式
+ * - 当电压环输出 > 电流环输出时，工作在CC模式
+ * 
+ * @note 该函数不接受参数，也不返回值，所有状态通过全局变量维护
+ * @retval None
+ */
+__attribute__((section(".ccmram"))) void Power_Control_Process(void)
 {
   /* USER CODE BEGIN Power_Control_Process */
-  float actual_voltage = Get_VOUT();
-  float actual_current = Get_IOUT();
-  float voltage_error;
-  float current_error;
-  float p_voltage;
-  float p_current;
-  float duty_voltage;
-  float duty_current;
-  float duty_final;
+  Drv_LED3_ON(); // 调试用：指示正在执行控制过程
+  volatile float actual_voltage = Get_VOUT();
+  volatile float actual_current = Get_IOUT();
+  volatile float voltage_error;
+  volatile float current_error;
+  volatile float p_voltage;
+  volatile float p_current;
+  volatile float duty_voltage;
+  volatile float duty_current;
+  volatile float duty_final;
+
+  s_TargetVoltageFinal = Get_TargetVoltageFinal();
+  s_CurrentLimit = Get_CurrentLimit();
+  s_PowerLimit = Get_PowerLimit();
+
+  /* 计算基于功率限制的电流上限，并与设定的电流限制取较小值 */
+  // 静态计数器，保存在内存中
+  static uint8_t decimation_cnt = 0;
+  if (++decimation_cnt >= 20) {
+  decimation_cnt = 0;
+  I_cp = s_PowerLimit / (actual_voltage + 0.1f);
+  // 绝对不能忘的防爆盾：强制限制物理最大电流！
+  if (I_cp > 5.0f) I_cp = 5.0f;
+  }
+
+  s_CurrentLimit = s_CurrentLimit < I_cp ?  s_CurrentLimit : I_cp;
+
 
   Power_Control_UpdateVoltageRamp();
 
   voltage_error = s_TargetVoltageRamp - actual_voltage;
   current_error = s_CurrentLimit - actual_current;
 
+  /* 电压环PID计算 */
   p_voltage = Voltage_Loop.Kp * voltage_error;
   Voltage_Loop.Integral += Voltage_Loop.Ki_dt * voltage_error;
   duty_voltage = p_voltage + Voltage_Loop.Integral;
   duty_voltage = Power_Control_Clamp(duty_voltage, Voltage_Loop.Out_Min, Voltage_Loop.Out_Max);
 
+  /* 电流环PID计算 */
   p_current = Current_Loop.Kp * current_error;
   Current_Loop.Integral += Current_Loop.Ki_dt * current_error;
   duty_current = p_current + Current_Loop.Integral;
   duty_current = Power_Control_Clamp(duty_current, Current_Loop.Out_Min, Current_Loop.Out_Max);
 
+  /* CV/CC模式选择：选择较小的占空比作为最终输出 */
   if (duty_voltage <= duty_current) {
       duty_final = duty_voltage;
       s_ActiveMode = POWER_CONTROL_MODE_CV;
@@ -113,11 +170,13 @@ void Power_Control_Process(void)
       s_ActiveMode = POWER_CONTROL_MODE_CC;
   }
 
+  /* 积分项反向计算，确保输出一致性 */
   Voltage_Loop.Integral = Power_Control_Clamp(duty_final - p_voltage, Voltage_Loop.Out_Min, Voltage_Loop.Out_Max);
   Current_Loop.Integral = Power_Control_Clamp(duty_final - p_current, Current_Loop.Out_Min, Current_Loop.Out_Max);
 
   s_LastDutyFinal = duty_final;
   BSP_HRTIM_UpdateDutySymmetric(Power_Control_DutyToTicks(duty_final));
+  Drv_LED3_OFF(); // 调试用：指示控制过程结束
   /* USER CODE END Power_Control_Process */
 }
 

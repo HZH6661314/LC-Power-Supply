@@ -22,6 +22,8 @@
 #include "stm32f3xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "power_control.h"
+#include "bsp_adc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +43,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+//ADC 中断频率极高，必须�?�过计数器进行降频抽�?
+static uint8_t decimation_cnt = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,10 +58,11 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern ADC_HandleTypeDef hadc1;
-extern ADC_HandleTypeDef hadc2;
+extern DMA_HandleTypeDef hdma_adc1;
+extern DMA_HandleTypeDef hdma_adc2;
 extern HRTIM_HandleTypeDef hhrtim1;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim15;
 extern TIM_HandleTypeDef htim16;
 /* USER CODE BEGIN EV */
@@ -204,18 +208,31 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles ADC1 and ADC2 interrupts.
+  * @brief This function handles DMA1 channel1 global interrupt.
   */
-void ADC1_2_IRQHandler(void)
+void DMA1_Channel1_IRQHandler(void)
 {
-  /* USER CODE BEGIN ADC1_2_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
 
-  /* USER CODE END ADC1_2_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc1);
-  HAL_ADC_IRQHandler(&hadc2);
-  /* USER CODE BEGIN ADC1_2_IRQn 1 */
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_adc1);
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 
-  /* USER CODE END ADC1_2_IRQn 1 */
+  /* USER CODE END DMA1_Channel1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel2 global interrupt.
+  */
+void DMA1_Channel2_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_adc2);
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 1 */
 }
 
 /**
@@ -246,6 +263,20 @@ void TIM1_UP_TIM16_IRQHandler(void)
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
 
   /* USER CODE END TIM1_UP_TIM16_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+
+  /* USER CODE END TIM2_IRQn 1 */
 }
 
 /**
@@ -305,5 +336,12 @@ void HRTIM1_FLT_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) 
+{
+  if (hadc->Instance == ADC1) 
+  {
+    BSP_ADC_Process();
+    Power_Control_Process();
+  }
+}
 /* USER CODE END 1 */

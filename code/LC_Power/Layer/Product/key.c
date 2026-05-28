@@ -54,9 +54,9 @@ const KeyMap_t MainPage_KeyMap[] = {
     { BTN_KEY_SET,   BTN_EVENT_LONG_PRESS,   Drv_LED0_OFF },
     { BTN_KEY_EXIT,  BTN_EVENT_SHORT_PRESS,  Drv_LED1_ON },
     { BTN_KEY_EXIT,  BTN_EVENT_LONG_PRESS,   Drv_LED1_OFF },
-    { BTN_KEY_UP,    BTN_EVENT_SHORT_PRESS,  Drv_LED2_ON },
+    { BTN_KEY_UP,    BTN_EVENT_SHORT_PRESS,  TargetVoltageFinal_ADD },
     { BTN_KEY_UP,    BTN_EVENT_LONG_PRESS,   Drv_LED2_OFF },
-    { BTN_KEY_DOWN,  BTN_EVENT_SHORT_PRESS,  Drv_LED3_ON },
+    { BTN_KEY_DOWN,  BTN_EVENT_SHORT_PRESS,  TargetVoltageFinal_SUB },
     { BTN_KEY_DOWN,  BTN_EVENT_LONG_PRESS,   Drv_LED3_OFF },
     { BTN_WT_SET,    BTN_EVENT_SHORT_PRESS,  Drv_LED0_ON },
     { BTN_WT_SET,    BTN_EVENT_LONG_PRESS,   Drv_LED0_OFF },
@@ -74,6 +74,10 @@ const KeyMap_t MainPage_KeyMap[] = {
 
 //全局的按键队列
 RingQueue_t g_BtnQueue = { .head = 0, .tail = 0 };
+
+static float s_TargetVoltageFinal = 0.0f;   // 目标电压（最终值）
+static float s_CurrentLimit = 5.0f;         // 电流限制
+static float s_PowerLimit = 100.0f;           // 功率限制
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -226,3 +230,40 @@ uint8_t Pop_Event_From_Queue(ButtonMsg_t *pMsg) {
     
     return 1; // 成功取出
 }
+
+void TargetVoltageFinal_ADD(void)
+{
+    s_TargetVoltageFinal += 0.5f;
+    if (s_TargetVoltageFinal > POWER_VOL_MAX_LIMIT) {
+        s_TargetVoltageFinal = POWER_VOL_MAX_LIMIT; // 上限保护
+    }
+}
+
+void TargetVoltageFinal_SUB(void)
+{
+    s_TargetVoltageFinal -= 0.5f;
+    if (s_TargetVoltageFinal < POWER_VOL_MIN_LIMIT) {
+        s_TargetVoltageFinal = POWER_VOL_MIN_LIMIT; // 下限保护
+    }
+}
+
+
+float Get_TargetVoltageFinal(void)
+{
+    return s_TargetVoltageFinal;
+}
+
+
+float Get_CurrentLimit(void)
+{
+    return s_CurrentLimit;
+}
+
+float Get_PowerLimit(void)
+{
+    return s_PowerLimit;
+}
+
+
+
+
