@@ -66,6 +66,8 @@ typedef struct {
 /* Exported functions prototypes ---------------------------------------------*/
 void Power_Control_Init(void);
 void Power_Control_Process(void);
+float Power_Control_GetLastDuty(void);
+PowerControlMode_t Power_Control_GetActiveMode(void);
 
 /* USER CODE BEGIN EFP */
 

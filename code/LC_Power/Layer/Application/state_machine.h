@@ -2,8 +2,7 @@
 /**
   ******************************************************************************
   * @file           : state_machine.h
-  * @brief          : Header for state_machine.c file.
-  *                   This file contains the module definitions and interfaces.
+  * @brief          : Application state machine and UI control brain.
   ******************************************************************************
   * @attention
   *
@@ -13,7 +12,6 @@
   */
 /* USER CODE END Header */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STATE_MACHINE_H
 #define __STATE_MACHINE_H
 
@@ -21,118 +19,115 @@
 extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+#define SM_VOLTAGE_MIN          (0.0f)
+#define SM_VOLTAGE_MAX          (48.0f)
+#define SM_CURRENT_MIN          (0.0f)
+#define SM_CURRENT_MAX          (5.0f)
+#define SM_POWER_LIMIT_DEFAULT  (100.0f)
+#define SM_VOLTAGE_STEP         (0.5f)
+#define SM_CURRENT_STEP         (0.1f)
 
-/* USER CODE END Includes */
-
-/* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
-// 状态接口定义
 typedef struct {
-    void (*Enter)(void);  // 进入函数指针
-    void (*Run)(void);    // 运行函数指针
-    void (*Exit)(void);   // 退出函数指针
+    void (*Enter)(void);
+    void (*Run)(void);
+    void (*Exit)(void);
 } State_Handler_t;
 
 typedef enum {
-    STATE_STANDBY = 0,   // 待机模式
-    STATE_SOFTSTART,     // 软启动模式
-    STATE_RUNNING,       // 运行模式
-    STATE_FAULT,         // 故障模式
-    STATE_MAX,           // 状态机最大状态数
+    STATE_STANDBY = 0,
+    STATE_SOFTSTART,
+    STATE_RUNNING,
+    STATE_FAULT,
+    STATE_MAX
 } State_t;
 
-//利用共用体和位域，将 32 个标志位无缝压缩进 1 个 32 位变量中
+typedef enum {
+    UI_STATE_HOME_IDLE = 0,     // 主界面-待机/运行态（无光标）
+    UI_STATE_HOME_MENU,          // 主界面-菜单选择态（光标显示）
+    UI_STATE_HOME_EDIT,          // 主界面-参数编辑态（光标闪烁2Hz）
+    UI_STATE_QUICK_SET,          // 快速设置子菜单
+    UI_STATE_SYS_SET,            // 系统设置子菜单
+    UI_STATE_MAX
+} UI_State_t;
+
+typedef enum {
+    SM_FOCUS_SET_VOLTAGE = 0,
+    SM_FOCUS_SET_CURRENT,
+    SM_FOCUS_QUICK_SET,
+    SM_FOCUS_SETTINGS,
+    SM_FOCUS_MAX
+} SM_Focus_t;
+
 typedef union {
-    uint32_t all_flags;        // 用于一键清零所有标志：Flags.all_flags = 0;
+    uint32_t all_flags;
     struct {
-        uint32_t Output_En  : 1; // 仅占 1 bit
-        uint32_t PD_Ready   : 1; // 仅占 1 bit
-        uint32_t Fault_OVP  : 1; // 过压保护标志
-        uint32_t Fault_OCP  : 1; // 过流保护标志
-        uint32_t reserved   : 28;// 保留位，凑齐 32 bit (4字节对齐)
+        uint32_t Output_En  : 1;
+        uint32_t PD_Ready   : 1;
+        uint32_t Fault_OVP  : 1;
+        uint32_t Fault_OCP  : 1;
+        uint32_t reserved   : 28;
     } bits;
 } SystemFlags_t;
 
-//全局核心数据结构 (严格按大小降序排列，天然满足 4 字节对齐)
 typedef struct {
-    // --- 32-bit 变量区 (4 bytes) ---
-    int32_t  Target_Voltage;   // 目标电压 (Q格式定点数)
-    int32_t  Real_Voltage;     // 实际电压 (ADC采样滤波后)
-    int32_t  Target_Current;   // 目标电流
-    int32_t  Real_Current;     // 实际电流
-    
-    SystemFlags_t Flags;       // 系统标志位 (32-bit)
-    
-    // --- 16-bit 变量区 (2 bytes) ---
-    uint16_t PWM_DutyCycle;    // PWM 占空比
-    uint16_t Temperature;      // 实时温度
-    
-    // --- 8-bit 变量区 (1 byte) ---
-    uint8_t  Active_Mode;      // 当前模式 (CV / CC)
-    uint8_t  Error_Code;       // 故障代码
-    uint8_t  Pad[2];           // 手动填充 2 字节，强制整个结构体大小为 4 的整数倍
+    int32_t Target_Voltage;
+    int32_t Real_Voltage;
+    int32_t Target_Current;
+    int32_t Real_Current;
+    SystemFlags_t Flags;
+    uint16_t PWM_DutyCycle;
+    uint16_t Temperature;
+    uint8_t Active_Mode;
+    uint8_t Error_Code;
+    uint8_t Pad[2];
 } PowerSystemData_t;
 
-// 声明一个全局唯一的实例
 extern PowerSystemData_t SysData;
 
-
-/* USER CODE END ET */
-
-/* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
-/* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
-
-/* Exported functions prototypes ---------------------------------------------*/
 void State_Machine_Init(void);
 void State_Machine_Process(void);
 void StateMachine_Task(void);
 
-// 定义状态处理机数组 (将所有模式挂载在这里)
-extern State_Handler_t State_Standby;   // 待机模式
-extern State_Handler_t State_SoftStart; // 软启动模式
-extern State_Handler_t State_RunNing;   // 运行模式
-extern State_Handler_t State_Fault;     // 故障模式
+void SM_Action_Enter(void);
+void SM_Action_Exit_Short(void);
+void SM_Action_Exit_Long(void);
+void SM_Action_Up(void);
+void SM_Action_Down(void);
 
-/* 待机模式状态机 接口定义 */
-void Standby_Enter(void); // 待机模式进入函数
-void Standby_Run(void);   // 待机模式运行函数
-void Standby_Exit(void);  // 待机模式退出函数
+UI_State_t SM_Get_UI_State(void);
+SM_Focus_t SM_Get_Focus(void);
+uint8_t SM_Get_QuickSetCursor(void);
+uint8_t SM_Get_SysSetCursor(void);
+float SM_Get_TargetVoltageFinal(void);
+float SM_Get_CurrentLimit(void);
+float SM_Get_PowerLimit(void);
+float SM_Get_MeasuredVoltage(void);
+float SM_Get_MeasuredCurrent(void);
+float SM_Get_MeasuredPower(void);
+uint8_t SM_Get_CCMode(void);
+uint8_t SM_Get_OutputEnabled(void);
+uint16_t SM_Get_TemperatureC(void);
 
-/* 软启动模式状态机 接口定义 */
-void SoftStart_Enter(void); // 软启动模式进入函数
-void SoftStart_Run(void);   // 软启动模式运行函数
-void SoftStart_Exit(void);  // 软启动模式退出函数
+extern State_Handler_t State_Standby;
+extern State_Handler_t State_SoftStart;
+extern State_Handler_t State_RunNing;
+extern State_Handler_t State_Fault;
 
-/* 运行模式状态机 接口定义 */
-void RunNing_Enter(void);  // 运行模式进入函数
-void RunNing_Run(void);    // 运行模式运行函数
-void RunNing_Exit(void);   // 运行模式退出函数
-
-/* 故障模式状态机 接口定义 */
-void Fault_Enter(void);    // 故障模式进入函数
-void Fault_Run(void);      // 故障模式运行函数
-void Fault_Exit(void);     // 故障模式退出函数
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
+void Standby_Enter(void);
+void Standby_Run(void);
+void Standby_Exit(void);
+void SoftStart_Enter(void);
+void SoftStart_Run(void);
+void SoftStart_Exit(void);
+void RunNing_Enter(void);
+void RunNing_Run(void);
+void RunNing_Exit(void);
+void Fault_Enter(void);
+void Fault_Run(void);
+void Fault_Exit(void);
 
 #ifdef __cplusplus
 }

@@ -62,11 +62,12 @@ void BSP_HRTIM_Init(void)
   // （此时因为定时器还没走，输出被死区保护和比较器按在安全电平）
   HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1 | HRTIM_OUTPUT_TA2 | HRTIM_OUTPUT_TB1 | HRTIM_OUTPUT_TB2);
 
-  // 2. 启动“心脏与总指挥”：Master, Timer A, Timer B 瞬间同步起跑！
+  // 2. 启动”心脏与总指挥”：Master, Timer A, Timer B 瞬间同步起跑！
   // 就是这句代码，让底层 4.6GHz 的时钟开始狂奔，触发信号开始射向 ADC
   HAL_HRTIM_WaveformCountStart(&hhrtim1, HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B);
 
-  HAL_TIM_Base_Start_IT(&htim2);
+  // V10: 临时禁用TIM2中断，诊断屏幕不亮问题
+  // HAL_TIM_Base_Start_IT(&htim2);
 
   /* USER CODE END BSP_HRTIM_Init */
 }

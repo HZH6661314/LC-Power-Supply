@@ -19,6 +19,7 @@
 
 #include "state_machine.h"
 #include "tft_gfx.h"
+#include "tim.h"  // V10: 需要htim2用于光标闪烁
 
 #define UI_SCREEN_W             240
 #define UI_SCREEN_H             240
@@ -109,6 +110,8 @@ static uint8_t UI_GetFocusRect(SM_Focus_t focus, int16_t *x, int16_t *y, int16_t
 
 void UI_Display_Init(void)
 {
+    extern TIM_HandleTypeDef htim2;  // V10: TIM2用于光标闪烁时基
+
     memset(&s_cache, 0, sizeof(s_cache));
     s_cache.vout = UI_INVALID_FLOAT;
     s_cache.iout = UI_INVALID_FLOAT;
@@ -130,6 +133,9 @@ void UI_Display_Init(void)
     UI_DrawStatus(0U, 0U, 25U);
 
     UI_Display_Process();
+
+    // V10: UI完全初始化后再启动TIM2中断，避免访问未初始化变量
+    HAL_TIM_Base_Start_IT(&htim2);
 }
 
 void UI_Display_Process(void)

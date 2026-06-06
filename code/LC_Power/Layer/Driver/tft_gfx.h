@@ -31,7 +31,9 @@ void TFTGFX_DrawArcThick(int16_t cx,
                          int16_t end_deg,
                          uint16_t color);
 void TFTGFX_DrawChar(int16_t x, int16_t y, char ch, uint16_t color, uint8_t scale);
+void TFTGFX_DrawCharOpaque(int16_t x, int16_t y, char ch, uint16_t fg_color, uint16_t bg_color, uint8_t scale);
 void TFTGFX_DrawString(int16_t x, int16_t y, const char *str, uint16_t color, uint8_t scale);
+void TFTGFX_DrawStringOpaque(int16_t x, int16_t y, const char *str, uint16_t fg_color, uint16_t bg_color, uint8_t scale);
 uint16_t TFTGFX_MeasureStringWidth(const char *str, uint8_t scale);
 int16_t TFTGFX_SinDeg1000(int16_t degrees);
 int16_t TFTGFX_CosDeg1000(int16_t degrees);

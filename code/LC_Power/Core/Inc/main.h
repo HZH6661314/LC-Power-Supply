@@ -53,9 +53,9 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void Hardware_Init();
-void Power_Control_Init();
-void BSP_Init();
+void Hardware_Init(void);
+void Power_Control_Init(void);
+void BSP_Init(void);
 
 
 

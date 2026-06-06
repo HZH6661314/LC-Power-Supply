@@ -499,6 +499,57 @@ void TFTGFX_DrawChar(int16_t x, int16_t y, char ch, uint16_t color, uint8_t scal
   }
 }
 
+void TFTGFX_DrawCharOpaque(int16_t x, int16_t y, char ch, uint16_t fg_color, uint16_t bg_color, uint8_t scale)
+{
+  uint8_t column;
+
+  if (scale == 0U)
+  {
+    scale = 1U;
+  }
+
+  if ((ch < 32) || (ch > 126))
+  {
+    ch = '?';
+  }
+
+  for (column = 0U; column < 5U; ++column)
+  {
+    uint8_t row_bits = tft_gfx_font_5x7[(uint8_t)(ch - 32)][column];
+    uint8_t row;
+
+    for (row = 0U; row < 7U; ++row)
+    {
+      uint16_t pixel_color = ((row_bits & (1U << row)) != 0U) ? fg_color : bg_color;
+
+      if (scale == 1U)
+      {
+        if (((int16_t)(x + column) >= 0) && ((int16_t)(y + row) >= 0))
+        {
+          TFT_DrawPixel((uint16_t)(x + column), (uint16_t)(y + row), pixel_color);
+        }
+      }
+      else
+      {
+        TFTGFX_FillRect((int16_t)(x + ((int16_t)column * scale)),
+                        (int16_t)(y + ((int16_t)row * scale)),
+                        scale,
+                        scale,
+                        pixel_color);
+      }
+    }
+  }
+
+  if (scale == 1U)
+  {
+    TFTGFX_FillRect((int16_t)(x + 5), y, 1, 7, bg_color);
+  }
+  else
+  {
+    TFTGFX_FillRect((int16_t)(x + (5 * scale)), y, scale, (int16_t)(7 * scale), bg_color);
+  }
+}
+
 void TFTGFX_DrawString(int16_t x, int16_t y, const char *str, uint16_t color, uint8_t scale)
 {
   if (str == 0)
@@ -514,6 +565,26 @@ void TFTGFX_DrawString(int16_t x, int16_t y, const char *str, uint16_t color, ui
   while (*str != '\0')
   {
     TFTGFX_DrawChar(x, y, *str, color, scale);
+    x = (int16_t)(x + (6 * scale));
+    ++str;
+  }
+}
+
+void TFTGFX_DrawStringOpaque(int16_t x, int16_t y, const char *str, uint16_t fg_color, uint16_t bg_color, uint8_t scale)
+{
+  if (str == 0)
+  {
+    return;
+  }
+
+  if (scale == 0U)
+  {
+    scale = 1U;
+  }
+
+  while (*str != '\0')
+  {
+    TFTGFX_DrawCharOpaque(x, y, *str, fg_color, bg_color, scale);
     x = (int16_t)(x + (6 * scale));
     ++str;
   }

@@ -80,6 +80,7 @@ virtualFolder:
     - name: Driver
       files:
         - path: ../Layer/Driver/tft_driver.c
+        - path: ../Layer/Driver/tft_gfx.c
         - path: ../Layer/Driver/temp_sensor.c
         - path: ../Layer/Driver/W25Q256.c
       folders: []
@@ -153,7 +154,7 @@ targets:
             C_FLAGS: --diag_suppress=1 --diag_suppress=1295
             c99-mode: true
             one-elf-section-per-function: true
-            optimization: level-0
+            optimization: level-1
             warnings: all-warnings
           global:
             output-debug-info: enable

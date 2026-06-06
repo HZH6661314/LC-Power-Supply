@@ -23,7 +23,7 @@
 #include "bsp_adc.h"
 #include "bsp_hrtim.h"
 #include "bsp_gpio.h"
-#include "key.h"
+#include "state_machine.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -81,6 +81,8 @@ static float Power_Control_Clamp(float value, float min_value, float max_value);
 static void Power_Control_ResetState(void);
 static void Power_Control_UpdateVoltageRamp(void);
 static uint16_t Power_Control_DutyToTicks(float duty);
+float Power_Control_GetLastDuty(void);
+PowerControlMode_t Power_Control_GetActiveMode(void);
 /* USER CODE END PFP */
 
 /* Exported functions --------------------------------------------------------*/
@@ -117,6 +119,18 @@ __attribute__((section(".ccmram"))) void Power_Control_Process(void)
 {
   /* USER CODE BEGIN Power_Control_Process */
   Drv_LED3_ON(); // 调试用：指示正在执行控制过程
+
+  // Karpathy原则：安全第一 - 待机状态不输出电压
+  if (SysData.Flags.bits.Output_En == 0U) {
+      // 待机状态：关闭PWM输出，复位PID积分
+      BSP_HRTIM_UpdateDutySymmetric(0U);
+      Voltage_Loop.Integral = 0.0f;
+      Current_Loop.Integral = 0.0f;
+      s_TargetVoltageRamp = 0.0f;
+      Drv_LED3_OFF();
+      return;
+  }
+
   volatile float actual_voltage = Get_VOUT();
   volatile float actual_current = Get_IOUT();
   volatile float voltage_error;
@@ -127,9 +141,9 @@ __attribute__((section(".ccmram"))) void Power_Control_Process(void)
   volatile float duty_current;
   volatile float duty_final;
 
-  s_TargetVoltageFinal = Get_TargetVoltageFinal();
-  s_CurrentLimit = Get_CurrentLimit();
-  s_PowerLimit = Get_PowerLimit();
+  s_TargetVoltageFinal = SM_Get_TargetVoltageFinal();
+  s_CurrentLimit = SM_Get_CurrentLimit();
+  s_PowerLimit = SM_Get_PowerLimit();
 
   /* 计算基于功率限制的电流上限，并与设定的电流限制取较小值 */
   // 静态计数器，保存在内存中
@@ -237,5 +251,15 @@ static uint16_t Power_Control_DutyToTicks(float duty)
     float limited_duty = Power_Control_Clamp(duty, POWER_CONTROL_DUTY_MIN, POWER_CONTROL_DUTY_MAX);
 
     return (uint16_t)(limited_duty + 0.5f);
+}
+
+float Power_Control_GetLastDuty(void)
+{
+    return s_LastDutyFinal;
+}
+
+PowerControlMode_t Power_Control_GetActiveMode(void)
+{
+    return s_ActiveMode;
 }
 /* USER CODE END 1 */

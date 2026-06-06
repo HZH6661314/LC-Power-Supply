@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC数控电源 UI开发工作台 (架构解耦版)</title>
+    <!-- 引入极具数码感的字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 物理尺寸常量 (单位: mm) */
+            --module-width: 31.25;
+            --module-height: 33.72;
+            --active-area: 27.72;
+            /* 放大倍率：为了在网页上清晰显示，将 1mm 映射为 14px */
+            --scale: 14; 
+            
+            /* UI 配色方案 */
+            --ui-bg: #dce4e8;       /* 优雅的浅工业灰 */
+            --ui-line: #111111;     /* 纯黑线框 */
+            --ui-text: #1a1a1a;     /* 深色文本 */
+            --ui-highlight: #000;   /* 进度条高亮 */
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #0f111a;
+            color: #a0aec0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .workspace {
+            display: flex;
+            gap: 40px;
+            max-width: 1400px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* ================= 左侧：UI 模拟器 ================= */
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hardware-module {
+            width: calc(var(--module-width) * var(--scale) * 1px);
+            height: calc(var(--module-height) * var(--scale) * 1px);
+            background: linear-gradient(135deg, #111, #2a2a2a);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.15);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            padding-top: calc(((var(--module-height) - var(--active-area)) * var(--scale) * 0.3) * 1px);
+            box-sizing: border-box;
+        }
+
+        .hardware-module::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 50%);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .active-area {
+            width: calc(var(--active-area) * var(--scale) * 1px);
+            height: calc(var(--active-area) * var(--scale) * 1px);
+            background-color: var(--ui-bg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .screen-240 {
+            width: 240px;
+            height: 240px;
+            background-color: var(--ui-bg);
+            position: absolute;
+            transform-origin: top left;
+            transform: scale(calc((var(--active-area) * var(--scale)) / 240));
+            color: var(--ui-text);
+            border: 1px solid var(--ui-line);
+            box-sizing: border-box;
+        }
+
+        .abs-box {
+            position: absolute;
+            box-sizing: border-box;
+            display: flex;
+            border-bottom: 1px solid var(--ui-line);
+            border-right: 1px solid var(--ui-line);
+        }
+
+        /* --- 240x240 绝对坐标映射 --- */
+        .title-bar { left: 0; top: 0; width: 240px; height: 32px; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; letter-spacing: 2px; border-right: none; }
+        .left-data { left: 0; top: 32px; width: 138px; height: 110px; flex-direction: column; justify-content: center; padding: 10px 0 10px 12px; }
+        .realtime-group { display: flex; align-items: baseline; margin: 4px 0; }
+        .realtime-val { font-family: 'Share Tech Mono', monospace; font-size: 40px; letter-spacing: -2px; text-shadow: 0px 0px 1px rgba(0,0,0,0.2); }
+        .unit { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; margin-left: 4px; }
+        .right-data { left: 138px; top: 32px; width: 102px; height: 110px; border-right: none; flex-direction: column; }
+        .setting-block { width: 100%; height: 55px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 1px solid var(--ui-line); }
+        .setting-block:last-child { border-bottom: none; }
+        .prog-container { width: 82px; height: 8px; border: 1px solid var(--ui-line); margin-bottom: 4px; background-color: transparent; padding: 1px; }
+        .prog-fill { height: 100%; background-color: var(--ui-highlight); }
+        .setting-val { font-family: 'Share Tech Mono', monospace; font-size: 24px; letter-spacing: -1px; margin-top: 2px; }
+        .power-data { left: 0; top: 142px; width: 138px; height: 68px; align-items: center; padding-left: 12px; }
+        .power-val { font-family: 'Share Tech Mono', monospace; font-size: 38px; letter-spacing: -2px; }
+        .func-data { left: 138px; top: 142px; width: 102px; height: 68px; border-right: none; flex-direction: column; }
+        .func-btn { width: 100%; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; letter-spacing: 1px; border-bottom: 1px solid var(--ui-line); }
+        .func-btn:last-child { border-bottom: none; }
+        .status-bar { left: 0; top: 210px; width: 240px; height: 30px; border-bottom: none; border-right: none; }
+        .status-item { width: 60px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; font-family: Arial, sans-serif; border-right: 1px solid var(--ui-line); }
+        .status-item:last-child { border-right: none; }
+
+        .hardware-badge {
+            background: #2d3748;
+            color: #cbd5e0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #4a5568;
+        }
+
+        /* ================= 右侧：提示词面板 ================= */
+        .prompt-section {
+            flex: 1;
+            min-width: 450px;
+            max-width: 800px;
+            background: #1e1e24;
+            border: 1px solid #2d3748;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #2d3748;
+            padding-bottom: 16px;
+        }
+
+        .prompt-header h2 {
+            margin: 0;
+            color: #4ade80;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+
+        .copy-btn:hover { background: #2563eb; transform: translateY(-1px); }
+        .copy-btn:active { transform: translateY(1px); }
+
+        .guide-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #a0aec0;
+            margin-bottom: 16px;
+        }
+        .guide-text strong { color: #e2e8f0; }
+
+        .prompt-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 520px;
+            background: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: vertical;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .prompt-textarea:focus { border-color: #3b82f6; }
+
+    </style>
+</head>
+<body>
+
+    <div class="workspace">
+        <!-- 左侧：UI 模拟器 -->
+        <div class="preview-section">
+            <div class="hardware-badge">1.54" TFT (240x240) 物理映射预览</div>
+            <div class="hardware-module">
+                <div class="active-area">
+                    <div class="screen-240">
+                        <div class="abs-box title-bar">LC数控电源</div>
+                        <div class="abs-box left-data">
+                            <div class="realtime-group"><span class="realtime-val">20.87</span><span class="unit">V</span></div>
+                            <div class="realtime-group"><span class="realtime-val">7.019</span><span class="unit">A</span></div>
+                        </div>
+                        <div class="abs-box right-data">
+                            <div class="setting-block">
+                                <div class="prog-container"><div class="prog-fill" style="width: 54%;"></div></div>
+                                <div class="setting-val">26.00</div>
+                            </div>
+                            <div class="setting-block">
+                                <div class="prog-container"><div class="prog-fill" style="width: 80%;"></div></div>
+                                <div class="setting-val">8.00</div>
+                            </div>
+                        </div>
+                        <div class="abs-box power-data">
+                            <div class="realtime-group"><span class="power-val">146.5</span><span class="unit">W</span></div>
+                        </div>
+                        <div class="abs-box func-data">
+                            <div class="func-btn">快速设置</div>
+                            <div class="func-btn">设置</div>
+                        </div>
+                        <div class="abs-box status-bar">
+                            <div class="status-item">ON</div>
+                            <div class="status-item">CV</div>
+                            <div class="status-item">36°C</div>
+                            <div class="status-item">normal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：提示词面板 -->
+        <div class="prompt-section">
+            <div class="prompt-header">
+                <h2>🤖 专属代码生成提示词 (极致解耦版)</h2>
+                <button class="copy-btn" onclick="copyPrompt()" id="copyBtn">一键复制提示词</button>
+            </div>
+            
+            <div class="guide-text">
+                <strong>使用说明：</strong>本次提示词严格规定了 MVC（显示-状态-交互）的各司其职。请直接发给大模型，它将一并为您生成代码与 markdown 手册。
+            </div>
+
+            <textarea id="promptText" class="prompt-textarea" readonly>
+# 角色与任务
+你是一位资深嵌入式架构师与 UI 工程师。我正在基于 STM32F334 开发一款数控电源。
+请你严格遵循以下“极致解耦”的架构职责划分，为我生成对应的代码文件，并在最后编写一份工程级的《系统使用手册》。
+
+# 架构职责强约束 (MVC模式)
+本次开发涉及 3 个核心模块，必须严格遵守职责边界，绝对禁止越权调用：
+
+1. **交互层 (key.h / key.c - 纯外部交互)**
+   - 负责底层按键扫描、消抖、长短按检测、事件入队与出队。
+   - 维护 `KeyMap_t` 映射表。映射表中的 action 指针必须直接指向 **状态机层** 暴露的函数（如 `SM_Action_Enter`, `SM_Action_Up`）。
+   - **绝对禁止**在 key.c 中直接调用 UI 绘图函数！
+
+2. **控制层 (state_machine.h / state_machine.c - 写状态机与控制)**
+   - 这是系统的“大脑”。负责维护系统 UI 状态机（如 `UI_STATE_STANDBY`, `UI_STATE_MENU`, `UI_STATE_ADJUST`）。
+   - 负责维护当前的光标焦点（如 focus 变量指向：设定电压、设定电流、快设、设置）。
+   - 暴露供交互层调用的接口（`SM_Action_Enter`, `SM_Action_Exit_Short`, `SM_Action_Exit_Long`, `SM_Action_Up`, `SM_Action_Down`）。
+   - 在上述接口中处理状态流转、焦点移动，并在增减参数时执行防爆盾逻辑（P=V*I <= 100W 校验）。
+
+3. **表现层 (ui_display.h / ui_display.c - 纯绘制UI)**
+   - 这是系统的“画笔”。没有逻辑决策权，只负责展示。
+   - 提供 `UI_Display_Process()` 供 50ms 调度器调用。
+   - **必须使用旧值比对(Dirty Flag)策略**！通过查询 adc 接口（如 `Get_VOUT()`）和状态机接口（如 `SM_Get_UI_State()`），判断数值或光标是否有变动。仅变动时局部覆写背景并重绘。严禁全局刷屏！
+   - 只允许使用 `tft_gfx.h` 提供的 `TFTGFX_DrawRect`, `TFTGFX_DrawString` 等 API。
+   - 请实现占位函数 `void UI_DrawChinese(int16_t x, int16_t y, const char* str, uint16_t color)`（内部画个矩形框即可），我会自己处理汉字库。
+
+# UI 布局绝对坐标 (240x240 分辨率)
+在 `ui_display.c` 中请严格使用以下线框坐标：
+1. **标题栏**: x=0, y=0, w=240, h=32。居中中文"LC数控电源"。
+2. **左侧实时数据**: x=0, y=32, w=138, h=110。上下显示实际 VOUT / IOUT (大字体)。右边界画竖线。
+3. **右侧设定数据**: x=138, y=32, w=102, h=110。上下各半，显示设定的 V/I。上方带进度条(宽82,高8，基于 设定值/最大值 比例填充)。底边界画横线。
+4. **左下功率**: x=0, y=142, w=138, h=68。显示实时功率 (VOUT * IOUT)。右边界画竖线。
+5. **右下功能**: x=138, y=142, w=102, h=68。上下均分，显示中文"快速设置"和"设置"。底边界画横线。
+6. **底部状态栏**: x=0, y=210, w=240, h=30。四等分(每块宽60)，显示: ON/OFF, CV/CC, 36C, normal。其中 CC/CV 逻辑：`Get_IOUT() >= Get_CurrentLimit()` 显 CC，否则 CV。
+* 注: MENU 或 ADJUST 状态时，用反色边框高亮被选中的区域。
+
+# 输出要求
+请依次输出以下完整的 7 个文件（直接写出完整工程代码，严禁省略过程）：
+1. `Layer/Product/key.h`
+2. `Layer/Product/key.c`
+3. `Layer/Application/state_machine.h`
+4. `Layer/Application/state_machine.c`
+5. `Layer/Product/ui_display.h`
+6. `Layer/Product/ui_display.c`
+7. `User_Manual.md` （在工程根目录下。内容需包含：模块职责说明、UI界面说明、按键操作逻辑流转图或说明表格）。
+</textarea>
+        </div>
+    </div>
+
+    <script>
+        function copyPrompt() {
+            const textarea = document.getElementById('promptText');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                const btn = document.getElementById('copyBtn');
+                btn.innerHTML = '✅ 复制成功！快发给AI吧';
+                btn.style.background = '#10b981';
+                btn.style.boxShadow = '0 4px 6px rgba(16, 185, 129, 0.3)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = '一键复制提示词';
+                    btn.style.background = '#3b82f6';
+                    btn.style.boxShadow = '0 4px 6px rgba(59, 130, 246, 0.3)';
+                }, 3000);
+            } catch (err) {
+                alert('复制失败，请手动全选复制。');
+            }
+        }
+    </script>
+</body>
+</html>
