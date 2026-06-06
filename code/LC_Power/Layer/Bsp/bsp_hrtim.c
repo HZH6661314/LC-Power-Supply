@@ -65,6 +65,9 @@ void BSP_HRTIM_Init(void)
   // 2. 启动“心脏与总指挥”：Master, Timer A, Timer B 瞬间同步起跑！
   // 就是这句代码，让底层 4.6GHz 的时钟开始狂奔，触发信号开始射向 ADC
   HAL_HRTIM_WaveformCountStart(&hhrtim1, HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B);
+
+  HAL_TIM_Base_Start_IT(&htim2);
+
   /* USER CODE END BSP_HRTIM_Init */
 }
 
@@ -101,5 +104,30 @@ void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty)
 
     SET_BIT(HRTIM1->sCommonRegs.CR2, HRTIM_CR2_TASWU | HRTIM_CR2_TBSWU | HRTIM_CR2_MSWU);
 }
+
+/* ==================== TIM2 UI Blink Timebase ==================== */
+/* TIM2用于UI光标闪烁的精确时基（500ms周期，2Hz频率）              */
+/* ============================================================== */
+volatile uint8_t g_UI_Blink_Flag = 0;      // 当前闪烁状态 (0=隐藏, 1=显示)
+volatile uint8_t g_UI_Blink_Changed = 0;   // 标志位变化通知
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == TIM2) {
+        static uint32_t s_blink_counter = 0;
+
+        s_blink_counter++;
+
+        // 每 500,000 次 = 500ms (TIM2频率1MHz)
+        if (s_blink_counter >= 500000U) {
+            s_blink_counter = 0U;
+
+            // 翻转闪烁状态
+            g_UI_Blink_Flag = (g_UI_Blink_Flag == 0U) ? 1U : 0U;
+            g_UI_Blink_Changed = 1U;
+        }
+    }
+}
+/* ==================== End of TIM2 Blink ====================== */
 
 /* USER CODE END 1 */
