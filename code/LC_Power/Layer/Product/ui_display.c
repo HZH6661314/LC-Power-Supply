@@ -83,7 +83,6 @@ typedef struct {
     uint8_t cvcc_cc;
     uint16_t temperature_c;
     uint8_t initialized;
-    uint8_t blink_counter;
     uint8_t blink_visible;
     uint8_t system_status;
 } UI_Cache_t;
@@ -122,7 +121,6 @@ void UI_Display_Init(void)
     s_cache.cvcc_cc = UI_INVALID_U8;
     s_cache.temperature_c = UI_INVALID_U16;
     s_cache.initialized = 1U;
-    s_cache.blink_counter = 0U;
     s_cache.blink_visible = 1U;
     s_cache.system_status = UI_INVALID_U8;
 
@@ -148,6 +146,9 @@ void UI_Display_Process(void)
     uint16_t temperature_c;
     uint8_t blink_state_changed = 0U;
 
+    extern volatile uint8_t g_UI_Blink_Flag;
+    extern volatile uint8_t g_UI_Blink_Changed;
+
     if (s_cache.initialized == 0U) {
         UI_Display_Init();
         return;
@@ -164,17 +165,14 @@ void UI_Display_Process(void)
     cc_mode = SM_Get_CCMode();
     temperature_c = SM_Get_TemperatureC();
 
-    // 处理光标闪烁（仅在EDIT状态）
+    // V10: 光标闪烁 - 检测TIM2中断设置的标志位
     if (ui_state == UI_STATE_HOME_EDIT) {
-        s_cache.blink_counter++;
-        if (s_cache.blink_counter >= UI_BLINK_TICKS) {
-            s_cache.blink_counter = 0U;
-            s_cache.blink_visible = (s_cache.blink_visible != 0U) ? 0U : 1U;
+        if (g_UI_Blink_Changed != 0U) {
+            g_UI_Blink_Changed = 0U;
+            s_cache.blink_visible = g_UI_Blink_Flag;
             blink_state_changed = 1U;
         }
     } else {
-        // 非EDIT状态，重置闪烁状态
-        s_cache.blink_counter = 0U;
         if (s_cache.blink_visible == 0U) {
             s_cache.blink_visible = 1U;
             blink_state_changed = 1U;
