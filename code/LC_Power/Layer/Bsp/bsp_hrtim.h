@@ -59,6 +59,10 @@ void BSP_HRTIM_Process(void);
 /* USER CODE BEGIN EFP */
 extern Tick_t g_Ticks[TICK_MAX];
 void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty);
+
+/* TIM2 UI Blink Timebase */
+extern volatile uint8_t g_UI_Blink_Flag;
+extern volatile uint8_t g_UI_Blink_Changed;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
