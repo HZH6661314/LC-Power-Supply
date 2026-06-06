@@ -60,9 +60,8 @@ void BSP_HRTIM_Process(void);
 extern Tick_t g_Ticks[TICK_MAX];
 void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty);
 
-/* TIM2 UI Blink Timebase */
-extern volatile uint8_t g_UI_Blink_Flag;
-extern volatile uint8_t g_UI_Blink_Changed;
+/* TIM2 Tick Counter (BSP抽象层) */
+extern volatile uint32_t g_TIM2_Tick;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

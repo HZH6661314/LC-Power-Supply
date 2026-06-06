@@ -106,29 +106,17 @@ void BSP_HRTIM_UpdateDutySymmetric(uint16_t duty)
     SET_BIT(HRTIM1->sCommonRegs.CR2, HRTIM_CR2_TASWU | HRTIM_CR2_TBSWU | HRTIM_CR2_MSWU);
 }
 
-/* ==================== TIM2 UI Blink Timebase ==================== */
-/* TIM2用于UI光标闪烁的精确时基（500ms周期，2Hz频率）              */
-/* ============================================================== */
-volatile uint8_t g_UI_Blink_Flag = 0;      // 当前闪烁状态 (0=隐藏, 1=显示)
-volatile uint8_t g_UI_Blink_Changed = 0;   // 标志位变化通知
+/* ==================== TIM2 Tick Counter (BSP抽象层) ==================== */
+/* BSP层只提供tick计数，不包含UI业务逻辑                                */
+/* ====================================================================== */
+volatile uint32_t g_TIM2_Tick = 0;  // TIM2 tick计数器（每次中断递增）
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM2) {
-        static uint32_t s_blink_counter = 0;
-
-        s_blink_counter++;
-
-        // 每 500,000 次 = 500ms (TIM2频率1MHz)
-        if (s_blink_counter >= 500000U) {
-            s_blink_counter = 0U;
-
-            // 翻转闪烁状态
-            g_UI_Blink_Flag = (g_UI_Blink_Flag == 0U) ? 1U : 0U;
-            g_UI_Blink_Changed = 1U;
-        }
+        g_TIM2_Tick++;  // BSP层只做计数，不包含业务逻辑
     }
 }
-/* ==================== End of TIM2 Blink ====================== */
+/* ==================== End of TIM2 Tick Counter ====================== */
 
 /* USER CODE END 1 */

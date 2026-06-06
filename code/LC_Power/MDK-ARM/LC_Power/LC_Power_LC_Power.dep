@@ -1,6 +1,6 @@
 Dependencies for Project 'LC_Power', Target 'LC_Power': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
-F (startup_stm32f334x8.s)(0x6A23A011)(--cpu Cortex-M4.fp.sp -g --apcs=interwork -I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include--pd "__UVISION_VERSION SETA 538" --pd "_RTE_ SETA 1" --pd "STM32F334x8 SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f334x8.lst --xref -o lc_power\startup_stm32f334x8.o --depend lc_power\startup_stm32f334x8.d)
+F (startup_stm32f334x8.s)(0x6A23D30B)(--cpu Cortex-M4.fp.sp -g --apcs=interwork -I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include--pd "__UVISION_VERSION SETA 538" --pd "_RTE_ SETA 1" --pd "STM32F334x8 SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f334x8.lst --xref -o lc_power\startup_stm32f334x8.o --depend lc_power\startup_stm32f334x8.d)
 F (../Core/Src/main.c)(0x6A179D75)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\main.o --omf_browse lc_power\main.crf --depend lc_power\main.d)
 I (../Core/Inc/main.h)(0x6A2185F4)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h)(0x69BA51D7)
@@ -147,7 +147,7 @@ I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h)(0x69BA51D7)
-F (../Core/Src/hrtim.c)(0x6A23A021)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\hrtim.o --omf_browse lc_power\hrtim.crf --depend lc_power\hrtim.d)
+F (../Core/Src/hrtim.c)(0x6A23D324)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\hrtim.o --omf_browse lc_power\hrtim.crf --depend lc_power\hrtim.d)
 I (../Core/Inc/hrtim.h)(0x69CBCF73)
 I (../Core/Inc/main.h)(0x6A2185F4)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h)(0x69BA51D7)
@@ -182,7 +182,7 @@ I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h)(0x69BA51D7)
-F (../Core/Src/tim.c)(0x6A23A00F)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\tim.o --omf_browse lc_power\tim.crf --depend lc_power\tim.d)
+F (../Core/Src/tim.c)(0x6A23D309)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\tim.o --omf_browse lc_power\tim.crf --depend lc_power\tim.d)
 I (../Core/Inc/tim.h)(0x6A172271)
 I (../Core/Inc/main.h)(0x6A2185F4)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h)(0x69BA51D7)
@@ -1026,7 +1026,7 @@ I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h)(0x69BA51D7)
 I (../Layer/Control/power_control.h)(0x6A1AF549)
-F (..\Layer\Product\ui_display.c)(0x6A23B511)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\ui_display.o --omf_browse lc_power\ui_display.crf --depend lc_power\ui_display.d)
+F (..\Layer\Product\ui_display.c)(0x6A23D210)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\ui_display.o --omf_browse lc_power\ui_display.crf --depend lc_power\ui_display.d)
 I (..\Layer\Product\ui_display.h)(0x6A1AEA27)
 I (D:\ProgramFile\MDK\Core\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
 I (D:\ProgramFile\MDK\Core\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
@@ -1034,6 +1034,39 @@ I (D:\ProgramFile\MDK\Core\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
 I (../Layer/Application/state_machine.h)(0x6A1EAF38)
 I (../Layer/Driver/tft_gfx.h)(0x6A1B073D)
 I (../Layer/Driver/tft_driver.h)(0x6A1AFDFA)
+I (../Core/Inc/tim.h)(0x6A172271)
+I (../Core/Inc/main.h)(0x6A2185F4)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h)(0x69BA51D7)
+I (../Core/Inc/stm32f3xx_hal_conf.h)(0x69E10DCF)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_rcc.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_def.h)(0x69BA51D7)
+I (../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f3xx.h)(0x69BA51D7)
+I (../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f334x8.h)(0x69BA51D7)
+I (../Drivers/CMSIS/Include/core_cm4.h)(0x69BA51B1)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x69BA51B1)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x69BA51B1)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x69BA51B1)
+I (../Drivers/CMSIS/Device/ST/STM32F3xx/Include/system_stm32f3xx.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x69BA51D7)
+I (D:\ProgramFile\MDK\Core\ARM\ARMCC\include\stddef.h)(0x5E8E3CC2)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_rcc_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_gpio.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_gpio_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_exti.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_dma.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_dma_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_cortex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_adc.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_adc_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_flash.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_flash_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_hrtim.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_i2c.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_i2c_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h)(0x69BA51D7)
+I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h)(0x69BA51D7)
 F (..\Layer\Product\param_store.c)(0x69E2344C)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\param_store.o --omf_browse lc_power\param_store.crf --depend lc_power\param_store.d)
 I (..\Layer\Product\param_store.h)(0x69E1F63B)
 F (..\Layer\Product\key.c)(0x6A1EC78D)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\key.o --omf_browse lc_power\key.crf --depend lc_power\key.d)
@@ -1215,7 +1248,7 @@ I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h)(0x69BA51D7)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h)(0x69BA51D7)
-F (..\Layer\Bsp\bsp_hrtim.c)(0x6A23D10E)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\bsp_hrtim.o --omf_browse lc_power\bsp_hrtim.crf --depend lc_power\bsp_hrtim.d)
+F (..\Layer\Bsp\bsp_hrtim.c)(0x6A23D333)(--c99 -c --cpu Cortex-M4.fp.sp -g -O1 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc -I ../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I ../Drivers/CMSIS/Include -I ../Layer/Product -I ../Layer/Application -I ../Layer/Control -I ../Layer/Driver -I ../Middlewares/ST/ARM/DSP/Inc -I ../Layer/Bsp -I ../Layer/Scheduler-I.\RTE\_LC_Power-ID:\ProgramFile\MDK\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\ProgramFile\MDK\Packs\Keil\STM32F3xx_DFP\2.2.2\Drivers\CMSIS\Device\ST\STM32F3xx\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F334x8 -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F334x8-o lc_power\bsp_hrtim.o --omf_browse lc_power\bsp_hrtim.crf --depend lc_power\bsp_hrtim.d)
 I (..\Layer\Bsp\bsp_hrtim.h)(0x6A23B219)
 I (../Core/Inc/main.h)(0x6A2185F4)
 I (../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h)(0x69BA51D7)

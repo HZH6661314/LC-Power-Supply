@@ -19,7 +19,8 @@
 
 #include "state_machine.h"
 #include "tft_gfx.h"
-#include "tim.h"  // V10: 需要htim2用于光标闪烁
+#include "tim.h"        // V10: 需要htim2用于光标闪烁
+#include "bsp_hrtim.h"  // V10: 需要g_TIM2_Tick
 
 #define UI_SCREEN_W             240
 #define UI_SCREEN_H             240
@@ -152,8 +153,9 @@ void UI_Display_Process(void)
     uint16_t temperature_c;
     uint8_t blink_state_changed = 0U;
 
-    extern volatile uint8_t g_UI_Blink_Flag;
-    extern volatile uint8_t g_UI_Blink_Changed;
+    // V10: 使用TIM2 tick实现光标闪烁（Product层实现业务逻辑）
+    extern volatile uint32_t g_TIM2_Tick;
+    static uint32_t s_last_blink_tick = 0;
 
     if (s_cache.initialized == 0U) {
         UI_Display_Init();
@@ -171,11 +173,13 @@ void UI_Display_Process(void)
     cc_mode = SM_Get_CCMode();
     temperature_c = SM_Get_TemperatureC();
 
-    // V10: 光标闪烁 - 检测TIM2中断设置的标志位
+    // V10: 光标闪烁逻辑（Product层）- 使用TIM2 tick，500ms周期
+    // TIM2配置：1kHz (1ms per tick)，需要500 tick = 500ms
     if (ui_state == UI_STATE_HOME_EDIT) {
-        if (g_UI_Blink_Changed != 0U) {
-            g_UI_Blink_Changed = 0U;
-            s_cache.blink_visible = g_UI_Blink_Flag;
+        uint32_t current_tick = g_TIM2_Tick;
+        if ((current_tick - s_last_blink_tick) >= 500U) {  // 500ms
+            s_last_blink_tick = current_tick;
+            s_cache.blink_visible = (s_cache.blink_visible == 0U) ? 1U : 0U;
             blink_state_changed = 1U;
         }
     } else {
@@ -183,6 +187,7 @@ void UI_Display_Process(void)
             s_cache.blink_visible = 1U;
             blink_state_changed = 1U;
         }
+        s_last_blink_tick = g_TIM2_Tick;  // 重置计时器
     }
 
     if (UI_FloatChanged(s_cache.vout, vout, 0.01f) ||
