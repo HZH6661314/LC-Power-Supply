@@ -32,6 +32,7 @@ static float s_CurrentLimit = 1.0f;
 static float s_PowerLimit = SM_POWER_LIMIT_DEFAULT;
 static uint8_t s_quick_set_cursor = 0U;
 static uint8_t s_sys_set_cursor = 0U;
+static uint8_t s_active_preset_index = 0xFFU;  // 0xFF = none active, 0-3 = valid preset
 
 static float SM_ClampFloat(float value, float min_value, float max_value);
 static void SM_ApplyPowerShield(SM_Focus_t changed_focus);
@@ -442,6 +443,9 @@ static void SM_ApplyQuickSet(uint8_t preset_index)
     s_TargetVoltageFinal = quick_presets[preset_index][0];
     s_CurrentLimit = quick_presets[preset_index][1];
     SM_ApplyPowerShield(SM_FOCUS_SET_CURRENT);
+
+    // Track which preset is currently active (for UI arrow indicator)
+    s_active_preset_index = preset_index;
 }
 
 static void SM_ToggleOutput(void)
@@ -564,3 +568,45 @@ static void SM_ChangeState(State_Handler_t *next_state)
         CurrentState->Enter();
     }
 }
+
+/**
+ * @brief  获取指定索引的快速设置预设值
+ * @note   UI层通过此接口读取预设数据用于显示
+ * @param  index: 预设索引 (0-3)
+ * @param  voltage: 输出电压指针 (V)
+ * @param  current: 输出电流指针 (A)
+ * @retval None
+ */
+void SM_Get_QuickSetPreset(uint8_t index, float *voltage, float *current)
+{
+    // 预设数组（与SM_ApplyQuickSet保持一致）
+    const float quick_presets[4][2] = {
+        {5.0f, 1.0f},   // 预设1: 5V/1A
+        {9.0f, 2.0f},   // 预设2: 9V/2A
+        {12.0f, 3.0f},  // 预设3: 12V/3A
+        {20.0f, 3.0f}   // 预设4: 20V/3A
+    };
+
+    // Karpathy原则：早返回，避免嵌套
+    if (index >= 4U) {
+        return;
+    }
+
+    if ((voltage == NULL) || (current == NULL)) {
+        return;
+    }
+
+    *voltage = quick_presets[index][0];
+    *current = quick_presets[index][1];
+}
+
+/**
+ * @brief  获取当前激活的预设索引
+ * @note   用于UI显示箭头指示器
+ * @retval 预设索引 (0-3 = 有效预设, 0xFF = 无预设激活)
+ */
+uint8_t SM_Get_ActivePresetIndex(void)
+{
+    return s_active_preset_index;
+}
+

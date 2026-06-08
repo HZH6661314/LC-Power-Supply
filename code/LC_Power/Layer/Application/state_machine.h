@@ -101,6 +101,8 @@ UI_State_t SM_Get_UI_State(void);
 SM_Focus_t SM_Get_Focus(void);
 uint8_t SM_Get_QuickSetCursor(void);
 uint8_t SM_Get_SysSetCursor(void);
+void SM_Get_QuickSetPreset(uint8_t index, float *voltage, float *current);
+uint8_t SM_Get_ActivePresetIndex(void);
 float SM_Get_TargetVoltageFinal(void);
 float SM_Get_CurrentLimit(void);
 float SM_Get_PowerLimit(void);

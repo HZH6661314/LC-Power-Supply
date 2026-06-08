@@ -1,0 +1,141 @@
+<h2>预设数据管理</h2>
+<p class="subtitle">确定预设数据的存储位置和内容结构</p>
+
+<h3>问题1：预设数据应该存储在哪里？</h3>
+
+<div class="options">
+  <div class="option" data-choice="keep-in-state-machine" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>保持在state_machine.c中（推荐）</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>位置</strong>: state_machine.c 中的 SM_ApplyQuickSet() 函数内部（当前实现）
+      </p>
+      <div style="margin-top: 12px; padding: 12px; background: #f0f0f0; border-left: 3px solid #333;">
+        <strong>当前代码</strong>（state_machine.c:427-436）:<br>
+        <pre style="font-family: monospace; font-size: 11px; margin-top: 8px; background: #fff; padding: 8px;">
+static void SM_ApplyQuickSet(uint8_t preset_index)
+{
+    const float quick_presets[4][2] = {
+        {5.0f, 1.0f},   // 预设1: 5V/1A
+        {9.0f, 2.0f},   // 预设2: 9V/2A
+        {12.0f, 3.0f},  // 预设3: 12V/3A
+        {20.0f, 3.0f}   // 预设4: 20V/3A
+    };
+    // ...
+}</pre>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li><strong>代码简单</strong>: 无需新增文件或模块</li>
+            <li><strong>性能最优</strong>: 编译时常量，无运行时开销</li>
+            <li><strong>符合当前需求</strong>: 4个固定预设，不需要动态修改</li>
+            <li><strong>遵循YAGNI原则</strong>: 不过度设计</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>修改预设需要重新编译固件</li>
+            <li>未来如果需要Flash存储，需要重构</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="separate-module" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>创建独立模块 quick_set.c</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>结构</strong>: 新增 Layer/Application/quick_set.c 和 quick_set.h
+      </p>
+      <div style="margin-top: 12px; padding: 12px; background: #f9f9f9; border: 1px solid #999;">
+        <strong>文件结构</strong>:<br>
+        <pre style="font-family: monospace; font-size: 11px; margin-top: 8px; background: #fff; padding: 8px;">
+// quick_set.h
+typedef struct {
+    float voltage;
+    float current;
+    const char *name;  // 可选：预设名称
+} QuickSetPreset_t;
+
+void QuickSet_Init(void);
+const QuickSetPreset_t* QuickSet_GetPreset(uint8_t index);
+uint8_t QuickSet_GetCount(void);
+
+// quick_set.c
+static const QuickSetPreset_t s_presets[4] = {
+    {5.0f, 1.0f, "USB"},
+    {9.0f, 2.0f, "QC"},
+    // ...
+};</pre>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>职责分离，代码组织更清晰</li>
+            <li>易于扩展（添加更多字段，如预设名称、图标）</li>
+            <li>未来迁移到Flash存储更容易</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>过度设计</strong>: 当前需求不需要这么复杂</li>
+            <li><strong>增加文件数量</strong>: 违反简洁性原则</li>
+            <li>调用链变长: UI → state_machine → quick_set</li>
+            <li>当前不支持中文，预设名称字段暂时无用</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="flash-based" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>从Flash动态加载（未来扩展）</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>方案</strong>: 使用 param_store.c 模块从 W25Q256 Flash读取预设
+      </p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>用户可通过上位机自定义预设</li>
+            <li>最灵活的方案</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>当前阶段不需要</strong>: param_store模块尚未完成</li>
+            <li><strong>复杂度极高</strong>: 需要序列化/反序列化、CRC校验</li>
+            <li>性能开销（Flash读取约2-5ms）</li>
+            <li>需要设计默认值fallback机制</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #fffbf0; border-left: 4px solid #f90;">
+  <h3>⚠️ 架构原则提醒</h3>
+  <p style="line-height: 1.6;">
+    根据项目的 <strong>Karpathy编码原则</strong> 和 <strong>YAGNI原则</strong>：
+  </p>
+  <ul>
+    <li><strong>简洁性</strong>: 最小化代码行数，避免过度设计</li>
+    <li><strong>单一职责</strong>: 预设数据是状态机的一部分，不需要单独模块</li>
+    <li><strong>务实优先</strong>: 当前需求是固定4个预设，不需要复杂的扩展性</li>
+  </ul>
+  <p style="margin-top: 12px; font-weight: bold; color: #c60;">
+    ✅ 推荐方案A：保持在state_machine.c中，等到真正需要Flash存储时再重构
+  </p>
+</div>

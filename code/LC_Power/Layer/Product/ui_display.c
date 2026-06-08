@@ -87,6 +87,8 @@ typedef struct {
     uint8_t initialized;
     uint8_t blink_visible;
     uint8_t system_status;
+    uint8_t quick_set_cursor;       // Cache cursor position for dirty detection
+    uint8_t quick_set_initialized;  // Track first entry to QUICK_SET state
 } UI_Cache_t;
 
 static UI_Cache_t s_cache;
@@ -108,6 +110,8 @@ static void UI_DrawCenteredAscii(int16_t x, int16_t y, int16_t w, const char *te
 static void UI_DrawValueText(int16_t x, int16_t y, int16_t width, const char *text, uint8_t scale);
 static uint8_t UI_FloatChanged(float old_value, float new_value, float threshold);
 static uint8_t UI_GetFocusRect(SM_Focus_t focus, int16_t *x, int16_t *y, int16_t *w, int16_t *h);
+static void UI_DrawQuickSetMenu(void);
+static void UI_DrawQuickSetItem(int16_t y, uint8_t index, uint8_t is_active, uint8_t has_cursor);
 
 void UI_Display_Init(void)
 {
@@ -127,6 +131,8 @@ void UI_Display_Init(void)
     s_cache.initialized = 1U;
     s_cache.blink_visible = 1U;
     s_cache.system_status = UI_INVALID_U8;
+    s_cache.quick_set_cursor = UI_INVALID_U8;
+    s_cache.quick_set_initialized = 0U;
 
     UI_DrawStaticFrame();
 
@@ -168,6 +174,33 @@ void UI_Display_Process(void)
     set_voltage = SM_Get_TargetVoltageFinal();
     set_current = SM_Get_CurrentLimit();
     ui_state = SM_Get_UI_State();
+
+    // Handle Quick Set submenu (full-screen overlay)
+    if (ui_state == UI_STATE_QUICK_SET) {
+        UI_DrawQuickSetMenu();
+        s_cache.ui_state = ui_state;
+        return;  // Skip main screen rendering
+    }
+
+    // Detect transition from QUICK_SET back to main screen
+    if ((s_cache.ui_state == UI_STATE_QUICK_SET) && (ui_state != UI_STATE_QUICK_SET)) {
+        // Reset Quick Set state
+        s_cache.quick_set_initialized = 0U;
+        // Force full main screen redraw by invalidating cache
+        s_cache.vout = UI_INVALID_FLOAT;
+        s_cache.iout = UI_INVALID_FLOAT;
+        s_cache.power = UI_INVALID_FLOAT;
+        s_cache.set_voltage = UI_INVALID_FLOAT;
+        s_cache.set_current = UI_INVALID_FLOAT;
+        s_cache.output_enabled = UI_INVALID_U8;
+        s_cache.cvcc_cc = UI_INVALID_U8;
+        s_cache.temperature_c = UI_INVALID_U16;
+        s_cache.system_status = UI_INVALID_U8;
+        // Redraw static frame
+        UI_DrawStaticFrame();
+        UI_DrawStatus(0U, 0U, 25U);
+    }
+
     focus = SM_Get_Focus();
     output_enabled = SM_Get_OutputEnabled();
     cc_mode = SM_Get_CCMode();
@@ -400,7 +433,8 @@ static void UI_DrawFocus(UI_State_t ui_state, SM_Focus_t focus)
     }
 
     if (ui_state == UI_STATE_QUICK_SET) {
-        // TODO: 绘制快速设置子菜单的光标
+        // Quick Set子菜单的光标采用反色背景样式
+        // 光标绘制已集成在UI_DrawQuickSetMenu()中，此处无需额外操作
         return;
     }
 
@@ -434,7 +468,8 @@ static void UI_ClearFocus(void)
     }
 
     if (s_cache.ui_state == UI_STATE_QUICK_SET) {
-        // TODO: 清除快速设置子菜单的光标
+        // Quick Set子菜单的光标清除已集成在UI_DrawQuickSetMenu()中
+        // （通过重绘整行实现，无需单独清除操作）
         return;
     }
 
@@ -570,6 +605,88 @@ static void UI_DrawValueText(int16_t x, int16_t y, int16_t width, const char *te
     }
 
     TFTGFX_DrawStringOpaque(draw_x, y, text, UI_COLOR_FG, UI_COLOR_BG, scale);
+}
+
+/**
+ * @brief  绘制单个快速设置菜单项
+ * @note   根据状态显示：箭头指示器（已应用）+ 反色光标（当前选中）
+ * @param  y: 行的Y坐标
+ * @param  index: 预设索引 (0-3)
+ * @param  is_active: 是否为当前应用的预设（显示箭头）
+ * @param  has_cursor: 是否有光标（反色显示）
+ * @retval None
+ */
+static void UI_DrawQuickSetItem(int16_t y, uint8_t index, uint8_t is_active, uint8_t has_cursor)
+{
+    float voltage = 0.0f;
+    float current = 0.0f;
+    char text[32];
+    int16_t x = 20;
+    uint16_t fg_color;
+    uint16_t bg_color;
+
+    // 获取预设数据
+    SM_Get_QuickSetPreset(index, &voltage, &current);
+
+    // 反色显示：光标所在行使用反色
+    if (has_cursor != 0U) {
+        fg_color = UI_COLOR_BG;  // 白色文字
+        bg_color = UI_COLOR_FG;  // 黑色背景
+    } else {
+        fg_color = UI_COLOR_FG;  // 黑色文字
+        bg_color = UI_COLOR_BG;  // 白色背景
+    }
+
+    // 填充行背景（确保覆盖之前的内容）
+    TFTGFX_FillRect((int16_t)(x - 5), y, 200, 14, bg_color);
+
+    // 绘制箭头指示器（如果此预设已应用）
+    if (is_active != 0U) {
+        TFTGFX_DrawStringOpaque(x, y, ">", fg_color, bg_color, 2U);
+    }
+
+    // 绘制预设内容："N. XX.XXV  X.XXA"
+    (void)snprintf(text, sizeof(text), "%u. %05.2fV  %04.2fA",
+                   (unsigned int)(index + 1U), voltage, current);
+    TFTGFX_DrawStringOpaque((int16_t)(x + 15), y, text, fg_color, bg_color, 2U);
+}
+
+/**
+ * @brief  绘制完整的快速设置子菜单（全屏覆盖）
+ * @note   首次进入时清屏，光标移动时重绘全部4个预设项
+ * @retval None
+ */
+static void UI_DrawQuickSetMenu(void)
+{
+    uint8_t cursor;
+    uint8_t active;
+    int16_t y;
+    uint8_t i;
+
+    cursor = SM_Get_QuickSetCursor();
+    active = SM_Get_ActivePresetIndex();
+
+    // 首次进入QUICK_SET状态：清屏并标记已初始化
+    if (s_cache.quick_set_initialized == 0U) {
+        TFTGFX_FillScreen(UI_COLOR_BG);
+        s_cache.quick_set_initialized = 1U;
+        s_cache.quick_set_cursor = UI_INVALID_U8;  // 强制首次重绘
+    }
+
+    // Dirty检查：仅当光标位置变化时重绘
+    if (s_cache.quick_set_cursor != cursor) {
+        y = 80;  // 起始Y坐标（垂直居中：(240-80)/2=80）
+
+        // 绘制全部4个预设项
+        for (i = 0; i < 4U; i++) {
+            uint8_t is_active = (active == i);
+            uint8_t has_cursor = (cursor == i);
+            UI_DrawQuickSetItem(y, i, is_active, has_cursor);
+            y += 22;  // 行间距：14px字高 + 8px间隙
+        }
+
+        s_cache.quick_set_cursor = cursor;
+    }
 }
 
 static uint8_t UI_FloatChanged(float old_value, float new_value, float threshold)

@@ -1,0 +1,143 @@
+<h2>EXIT键行为设计</h2>
+<p class="subtitle">确定短按和长按EXIT键的不同响应</p>
+
+<h3>问题：在快速设置菜单中，EXIT键的短按和长按应该如何处理？</h3>
+
+<div class="options">
+  <div class="option" data-choice="short-menu-long-idle" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>短按返回MENU，长按直达IDLE（推荐）</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>行为</strong>:<br>
+        • EXIT短按: QUICK_SET → HOME_MENU（返回上级菜单）<br>
+        • EXIT长按: QUICK_SET → HOME_IDLE（直接退出所有菜单）
+      </p>
+      <div class="mockup" style="margin-top: 8px;">
+        <div class="mockup-body" style="width: 300px; margin: 0 auto; padding: 12px; background: #f9f9f9; border: 2px solid #333;">
+          <div style="text-align: center; font-size: 11px; margin-bottom: 12px; font-weight: bold;">导航流程图</div>
+          <div style="font-size: 11px; line-height: 2;">
+            <div style="padding: 6px; background: #e0e0e0; text-align: center; margin-bottom: 8px;">HOME_IDLE（主界面-无光标）</div>
+            <div style="text-align: center; color: #666;">↓ UP/DOWN唤醒</div>
+            <div style="padding: 6px; background: #d0d0f0; text-align: center; margin-bottom: 8px;">HOME_MENU（主界面-光标显示）</div>
+            <div style="text-align: center; color: #666;">↓ ENTER "快速设置"</div>
+            <div style="padding: 6px; background: #f0d0d0; text-align: center; margin-bottom: 8px;">QUICK_SET（快速设置子菜单）</div>
+
+            <div style="margin-top: 12px; padding: 8px; background: #fff; border: 1px solid #999;">
+              <div style="color: #090; font-weight: bold;">✓ EXIT短按 → 返回 HOME_MENU</div>
+              <div style="color: #666; font-size: 10px; margin-top: 4px;">用户可能想选择"系统设置"而不是"快速设置"</div>
+            </div>
+
+            <div style="margin-top: 8px; padding: 8px; background: #fff; border: 1px solid #999;">
+              <div style="color: #c00; font-weight: bold;">⚡ EXIT长按 → 直达 HOME_IDLE</div>
+              <div style="color: #666; font-size: 10px; margin-top: 4px;">快速退出所有菜单，回到待机状态</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li><strong>层级清晰</strong>: 短按逐级返回，符合菜单导航直觉</li>
+            <li><strong>长按直达</strong>: 提供快捷退出，避免多次按键</li>
+            <li><strong>与主界面一致</strong>: HOME_MENU短按也是返回IDLE</li>
+            <li><strong>灵活性高</strong>: 用户可以返回上级选择其他功能</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>需要用户理解短按/长按的区别</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top: 12px; padding: 12px; background: #f0f0f0; border-left: 3px solid #333;">
+        <strong>当前代码</strong>（state_machine.c:160-170）:<br>
+        <pre style="font-family: monospace; font-size: 11px; margin-top: 8px; background: #fff; padding: 8px;">
+// QUICK_SET: 短按返回MENU
+if (s_ui_state == UI_STATE_QUICK_SET) {
+    s_ui_state = UI_STATE_HOME_MENU;
+    return;
+}
+
+// QUICK_SET: 长按直达IDLE
+if (s_ui_state == UI_STATE_QUICK_SET) {
+    s_ui_state = UI_STATE_HOME_IDLE;
+    return;
+}</pre>
+        <div style="color: #090; margin-top: 8px;">✅ 代码已实现此逻辑</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="both-to-idle" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>短按和长按都直达IDLE</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>行为</strong>:<br>
+        • EXIT短按: QUICK_SET → HOME_IDLE<br>
+        • EXIT长按: QUICK_SET → HOME_IDLE（相同）
+      </p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>简化逻辑，短按长按效果相同</li>
+            <li>符合"快速"定位（快进快出）</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>灵活性差</strong>: 无法返回上级菜单选择其他功能</li>
+            <li><strong>不符合层级导航原则</strong>: 破坏了菜单的层级结构</li>
+            <li>如果用户误入快速设置，无法优雅地返回选择系统设置</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="short-idle-long-nothing" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>仅短按有效，长按无特殊功能</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>行为</strong>:<br>
+        • EXIT短按: QUICK_SET → HOME_MENU（或HOME_IDLE）<br>
+        • EXIT长按: 无动作
+      </p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>最简单的实现</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>浪费长按功能</strong>: 无法提供快捷退出</li>
+            <li>如果短按返回IDLE，则无法返回MENU（问题同B）</li>
+            <li>如果短按返回MENU，则缺少快速退出方式</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #f0f9f0; border-left: 4px solid #090;">
+  <h3>✅ 推荐：方案A - 短按返回MENU，长按直达IDLE</h3>
+  <p style="line-height: 1.6;">
+    这是最符合人机交互原则的设计：
+  </p>
+  <ul>
+    <li><strong>符合层级导航</strong>: 短按逐级返回是标准做法</li>
+    <li><strong>提供快捷方式</strong>: 长按直达避免多次按键</li>
+    <li><strong>代码已实现</strong>: state_machine.c:160-170和183-186已有此逻辑</li>
+    <li><strong>与整体设计一致</strong>: 其他子菜单（SYS_SET）也是相同逻辑</li>
+  </ul>
+</div>

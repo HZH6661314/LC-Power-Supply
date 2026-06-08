@@ -1,0 +1,109 @@
+<h2>交互行为设计</h2>
+<p class="subtitle">确定用户按键操作后的系统响应</p>
+
+<h3>问题：用户按ENTER确认预设后，应该如何处理？</h3>
+
+<div class="options">
+  <div class="option" data-choice="apply-and-return" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>应用预设并返回主界面（推荐）</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>流程</strong>: ENTER确认 → 立即应用电压/电流设定 → 自动返回HOME_IDLE状态 → 用户可以直接按SET开启输出
+      </p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li><strong>效率高</strong>: 一键完成，减少操作步骤</li>
+            <li><strong>符合"快速"定位</strong>: 快速设置就是为了快</li>
+            <li><strong>用户心理模型清晰</strong>: 选择即应用</li>
+            <li><strong>代码简单</strong>: 不需要额外的确认状态</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>误触风险（但可通过EXIT长按返回缓解）</li>
+            <li>无法在应用前预览/微调</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top: 12px; padding: 12px; background: #f0f0f0; border-left: 3px solid #333;">
+        <strong>状态机流程</strong>:<br>
+        <code style="font-family: monospace; font-size: 11px;">
+        QUICK_SET → (ENTER) → 调用SM_ApplyQuickSet() → s_ui_state = HOME_IDLE
+        </code>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="apply-and-stay" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>应用预设但停留在菜单</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>流程</strong>: ENTER确认 → 应用设定 → 保持在QUICK_SET状态 → 用户需要手动按EXIT返回
+      </p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>用户可以连续尝试多个预设</li>
+            <li>提供"反悔"机会（再选其他预设）</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>不符合"快速"定位</strong>: 需要额外操作</li>
+            <li>用户可能困惑："为什么还在这个界面？"</li>
+            <li>增加交互复杂度</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="apply-and-edit" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>应用预设后进入编辑模式</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>流程</strong>: ENTER确认 → 应用设定 → 进入HOME_EDIT状态 → 用户可以微调后再确认
+      </p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>预设作为"起点"，可微调</li>
+            <li>灵活性高</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>最不符合"快速"定位</strong></li>
+            <li>交互路径最复杂</li>
+            <li>如果用户只想用预设值，反而增加操作</li>
+            <li>状态跳转逻辑复杂（QUICK_SET → HOME_EDIT需要额外处理焦点）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #fffbf0; border-left: 4px solid #f90;">
+  <h3>💡 当前代码分析</h3>
+  <p>在 <code>state_machine.c:128-131</code> 已有初步实现：</p>
+  <pre style="background: #f5f5f5; padding: 8px; font-size: 11px; overflow-x: auto;">
+// QUICK_SET: SET按键应用预设组
+if (s_ui_state == UI_STATE_QUICK_SET) {
+    SM_ApplyQuickSet(s_quick_set_cursor);
+    return;  // ⚠️ 未指定返回哪个状态
+}</pre>
+  <p style="margin-top: 8px; font-size: 13px;">
+    目前代码在应用预设后<strong>没有改变UI状态</strong>，需要明确指定返回行为。
+  </p>
+</div>

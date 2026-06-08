@@ -1,0 +1,218 @@
+<h2>快速设置UI实现方案</h2>
+<p class="subtitle">基于您的选择，现在提出3种具体的实现方案</p>
+
+<div class="section" style="background: #f0f9f0; padding: 16px; border-left: 4px solid #090;">
+  <h3>✅ 已确认的设计决策</h3>
+  <ul style="line-height: 1.8;">
+    <li><strong>UI布局</strong>: 简化列表 - 仅显示电压/电流数值，大字体</li>
+    <li><strong>ENTER行为</strong>: 应用预设并直接返回HOME_IDLE</li>
+    <li><strong>光标移动</strong>: 循环滚动（已实现）</li>
+    <li><strong>EXIT行为</strong>: 短按返回MENU，长按直达IDLE（已实现）</li>
+    <li><strong>数据存储</strong>: 保持在state_machine.c中（已实现）</li>
+  </ul>
+</div>
+
+<h3>现在需要选择UI绘制的实现方式</h3>
+
+<div class="options">
+  <div class="option" data-choice="dedicated-function" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>独立绘制函数 + 完整刷新（推荐）</h3>
+
+      <div style="margin: 12px 0; padding: 12px; background: #f9f9f9; border: 1px solid #999;">
+        <strong>实现结构</strong>:<br>
+        <pre style="font-family: monospace; font-size: 10px; margin-top: 8px; background: #fff; padding: 8px; overflow-x: auto;">
+// ui_display.c 新增函数
+
+static void UI_DrawQuickSetMenu(uint8_t cursor_pos) {
+    // 1. 全屏填充背景色
+    // 2. 绘制标题 "QUICK SET"
+    // 3. 绘制4个预设项（循环）
+    //    - 如果是当前光标位置，绘制粗边框高亮
+    //    - 否则绘制细边框
+    // 4. 绘制底部提示栏
+}
+
+// UI_Display_Process() 中添加状态分支
+void UI_Display_Process(void) {
+    // ...现有代码...
+
+    // 新增：快速设置子菜单渲染
+    if (ui_state == UI_STATE_QUICK_SET) {
+        uint8_t cursor = SM_Get_QuickSetCursor();
+
+        // 状态切换时全屏重绘
+        if (s_cache.ui_state != UI_STATE_QUICK_SET) {
+            UI_DrawQuickSetMenu(cursor);
+        }
+        // 光标移动时仅重绘变化项
+        else if (s_cache.quick_cursor != cursor) {
+            UI_RedrawQuickSetItem(s_cache.quick_cursor, 0); // 旧位置
+            UI_RedrawQuickSetItem(cursor, 1);               // 新位置
+        }
+
+        s_cache.quick_cursor = cursor;
+        return;  // 跳过主界面渲染
+    }
+
+    // ...原有主界面渲染...
+}</pre>
+      </div>
+
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li><strong>代码清晰</strong>: 独立函数，职责单一</li>
+            <li><strong>性能优化</strong>: 首次全绘，后续只刷新变化项</li>
+            <li><strong>易于维护</strong>: 子菜单逻辑完全独立</li>
+            <li><strong>符合Karpathy原则</strong>: 简洁、单一职责</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>需要额外的缓存变量（s_cache.quick_cursor）</li>
+            <li>需要两个函数：UI_DrawQuickSetMenu() 和 UI_RedrawQuickSetItem()</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; padding: 12px; background: #f0f0f0; border-left: 3px solid #333;">
+        <strong>工作量估计</strong>: ~80行代码<br>
+        <strong>性能</strong>: 首次进入86ms（全屏刷新），光标移动10-15ms（仅刷新2项）
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="always-full-redraw" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>简化实现 - 每次全部重绘</h3>
+
+      <div style="margin: 12px 0; padding: 12px; background: #f9f9f9; border: 1px solid #999;">
+        <strong>实现结构</strong>:<br>
+        <pre style="font-family: monospace; font-size: 10px; margin-top: 8px; background: #fff; padding: 8px; overflow-x: auto;">
+// ui_display.c 新增函数
+
+static void UI_DrawQuickSetMenu(uint8_t cursor_pos) {
+    // 1. 全屏填充背景色
+    // 2. 绘制标题
+    // 3. 绘制4个预设项（每次都重绘全部）
+    // 4. 绘制底部提示栏
+}
+
+// UI_Display_Process() 中添加
+void UI_Display_Process(void) {
+    // ...
+
+    if (ui_state == UI_STATE_QUICK_SET) {
+        uint8_t cursor = SM_Get_QuickSetCursor();
+
+        // 光标变化或状态变化时，全屏重绘
+        if (s_cache.ui_state != UI_STATE_QUICK_SET ||
+            s_cache.quick_cursor != cursor) {
+            UI_DrawQuickSetMenu(cursor);
+            s_cache.quick_cursor = cursor;
+        }
+        return;
+    }
+
+    // ...
+}</pre>
+      </div>
+
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li><strong>最简单</strong>: 只需一个绘制函数</li>
+            <li><strong>无需复杂脏检查</strong>: 逻辑直观</li>
+            <li><strong>代码量最少</strong>: ~60行代码</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>性能浪费</strong>: 每次光标移动都全屏刷新（86ms）</li>
+            <li><strong>可能闪烁</strong>: 取决于刷新速度</li>
+            <li><strong>不符合项目现有的Dirty-flag优化原则</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; padding: 12px; background: #fff3cd; border-left: 3px solid #f90;">
+        <strong>⚠️ 性能警告</strong>: 每次UP/DOWN按键都会触发86ms的全屏刷新，用户体验可能不流畅
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="state-based-rendering" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>状态驱动渲染 - 多状态细化</h3>
+
+      <div style="margin: 12px 0; padding: 12px; background: #f9f9f9; border: 1px solid #999;">
+        <strong>实现思路</strong>:<br>
+        <pre style="font-family: monospace; font-size: 10px; margin-top: 8px; background: #fff; padding: 8px; overflow-x: auto;">
+// 将QUICK_SET拆分为多个子状态
+
+typedef enum {
+    QUICK_STATE_INIT,      // 首次进入，需要全屏绘制
+    QUICK_STATE_BROWSING,  // 正常浏览，增量更新
+    QUICK_STATE_APPLYING,  // 应用预设中
+} QuickSetState_t;
+
+static QuickSetState_t s_quick_state = QUICK_STATE_INIT;
+
+void UI_Display_Process(void) {
+    if (ui_state == UI_STATE_QUICK_SET) {
+        switch (s_quick_state) {
+            case QUICK_STATE_INIT:
+                UI_DrawQuickSetMenuFull();
+                s_quick_state = QUICK_STATE_BROWSING;
+                break;
+            case QUICK_STATE_BROWSING:
+                // 仅更新变化部分
+                break;
+            // ...
+        }
+    }
+}</pre>
+      </div>
+
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>状态机思维清晰</li>
+            <li>易于扩展（例如添加"确认"状态）</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>过度设计</strong>: 当前需求不需要这么多状态</li>
+            <li><strong>增加复杂度</strong>: 引入新的状态枚举和管理逻辑</li>
+            <li><strong>违反YAGNI原则</strong>: 不需要的抽象</li>
+            <li>代码量最大（~120行）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #f0f9f0; border-left: 4px solid #090;">
+  <h3>💡 推荐：方案A - 独立绘制函数 + 完整刷新</h3>
+  <p style="line-height: 1.6;">
+    这是性能和代码简洁性的最佳平衡点：
+  </p>
+  <ul>
+    <li>符合项目现有的Dirty-flag优化策略</li>
+    <li>首次进入全绘（86ms可接受），后续光标移动仅10-15ms</li>
+    <li>代码量适中（~80行），职责清晰</li>
+    <li>与主界面的渲染逻辑一致</li>
+  </ul>
+</div>

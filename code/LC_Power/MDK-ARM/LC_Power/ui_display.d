@@ -40,3 +40,4 @@ lc_power\ui_display.o: ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr.h
 lc_power\ui_display.o: ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h
 lc_power\ui_display.o: ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h
 lc_power\ui_display.o: ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h
+lc_power\ui_display.o: ../Layer/Bsp/bsp_hrtim.h

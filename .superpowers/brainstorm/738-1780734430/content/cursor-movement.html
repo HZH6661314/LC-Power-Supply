@@ -1,0 +1,117 @@
+<h2>光标移动逻辑</h2>
+<p class="subtitle">确定UP/DOWN键移动光标的边界行为</p>
+
+<h3>问题：当光标在第一项时按UP，或在最后一项时按DOWN，应该如何处理？</h3>
+
+<div class="options">
+  <div class="option" data-choice="circular" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>循环滚动（推荐）</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>行为</strong>: 光标在第一项时按UP → 跳到最后一项；光标在最后一项时按DOWN → 跳到第一项
+      </p>
+      <div class="mockup" style="margin-top: 8px;">
+        <div class="mockup-body" style="width: 200px; margin: 0 auto; padding: 12px; background: #f9f9f9; border: 2px solid #333;">
+          <div style="text-align: center; font-size: 11px; margin-bottom: 8px; font-weight: bold;">循环示意</div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 10px;">
+              <div style="padding: 4px; border: 1px solid #999; margin-bottom: 2px;">预设1: 5V/1A</div>
+              <div style="padding: 4px; border: 1px solid #999; margin-bottom: 2px;">预设2: 9V/2A</div>
+              <div style="padding: 4px; border: 1px solid #999; margin-bottom: 2px;">预设3: 12V/3A</div>
+              <div style="padding: 4px; border: 1px solid #999;">预设4: 20V/3A</div>
+            </div>
+            <div style="font-size: 24px; color: #999;">⟳</div>
+          </div>
+          <div style="text-align: center; font-size: 10px; margin-top: 8px; color: #666;">
+            光标可以从任意位置回到起点
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li><strong>符合用户直觉</strong>: 常见于各类菜单系统</li>
+            <li><strong>操作连贯</strong>: 不会"卡"在边界上</li>
+            <li><strong>导航效率高</strong>: 可以快速到达任意项（最多按3次）</li>
+            <li><strong>代码已实现</strong>: state_machine.c:237-243已有循环逻辑</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>首次使用可能需要适应（但这是业界标准）</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top: 12px; padding: 12px; background: #f0f0f0; border-left: 3px solid #333;">
+        <strong>当前代码</strong>（state_machine.c:237-243）:<br>
+        <pre style="font-family: monospace; font-size: 11px; margin-top: 8px; background: #fff; padding: 8px;">
+if (s_quick_set_cursor > 0U) {
+    s_quick_set_cursor--;
+} else {
+    s_quick_set_cursor = 3U;  // ✅ 循环到最后
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="boundary-stop" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>边界停止</h3>
+      <p style="margin: 12px 0; line-height: 1.6;">
+        <strong>行为</strong>: 光标在第一项时按UP → 无动作；光标在最后一项时按DOWN → 无动作
+      </p>
+      <div class="mockup" style="margin-top: 8px;">
+        <div class="mockup-body" style="width: 200px; margin: 0 auto; padding: 12px; background: #f9f9f9; border: 2px solid #333;">
+          <div style="text-align: center; font-size: 11px; margin-bottom: 8px; font-weight: bold;">边界停止示意</div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 10px;">
+              <div style="padding: 4px; border: 1px solid #999; margin-bottom: 2px; background: #fdd;">⛔ 顶部边界</div>
+              <div style="padding: 4px; border: 1px solid #999; margin-bottom: 2px;">预设2: 9V/2A</div>
+              <div style="padding: 4px; border: 1px solid #999; margin-bottom: 2px;">预设3: 12V/3A</div>
+              <div style="padding: 4px; border: 1px solid #999; background: #fdd;">⛔ 底部边界</div>
+            </div>
+            <div style="font-size: 24px; color: #999;">⊥</div>
+          </div>
+          <div style="text-align: center; font-size: 10px; margin-top: 8px; color: #666;">
+            光标在边界处"停止"
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>边界感明确，不会"迷失"</li>
+            <li>适合线性浏览（从上到下）</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li><strong>导航效率低</strong>: 从最后回到第一项需要按3次UP</li>
+            <li><strong>不符合业界惯例</strong>: 大多数嵌入式设备菜单都是循环的</li>
+            <li><strong>需要修改代码</strong>: 当前实现是循环逻辑</li>
+            <li>按键无响应会让用户困惑（"是不是坏了？"）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #f0f9f0; border-left: 4px solid #090;">
+  <h3>✅ 推荐：循环滚动</h3>
+  <p style="line-height: 1.6;">
+    基于以下原因，强烈推荐<strong>循环滚动</strong>：
+  </p>
+  <ul>
+    <li>代码已经实现，无需修改</li>
+    <li>符合用户对嵌入式设备菜单的普遍预期</li>
+    <li>提高操作效率（4项菜单，循环最多按3次，边界停止最差按3次）</li>
+    <li>与主界面的焦点移动逻辑一致（state_machine.c:414-425也是循环）</li>
+  </ul>
+</div>

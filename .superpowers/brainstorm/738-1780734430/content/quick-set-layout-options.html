@@ -1,0 +1,230 @@
+<h2>快速设置子菜单 - UI布局方案</h2>
+<p class="subtitle">当前主界面是240×240的TFT显示屏，已有完整的UI框架</p>
+
+<div class="section">
+  <h3>当前主界面布局（参考）</h3>
+  <div class="mockup">
+    <div class="mockup-header">主界面 240×240</div>
+    <div class="mockup-body" style="width: 240px; height: 240px; margin: 0 auto; background: white; border: 2px solid #333; position: relative; font-family: monospace; font-size: 11px;">
+      <!-- Title bar -->
+      <div style="height: 32px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold;">LC POWER</div>
+
+      <!-- Main content area -->
+      <div style="display: flex; height: 110px;">
+        <!-- Realtime data (left) -->
+        <div style="width: 138px; border-right: 1px solid #333; padding: 4px;">
+          <div style="font-size: 9px;">VOUT</div>
+          <div style="font-size: 16px; font-weight: bold;">12.34V</div>
+          <div style="font-size: 9px; margin-top: 8px;">IOUT</div>
+          <div style="font-size: 16px; font-weight: bold;">1.234A</div>
+        </div>
+
+        <!-- Settings (right) -->
+        <div style="width: 102px; padding: 4px;">
+          <div style="font-size: 9px;">SET V</div>
+          <div style="font-size: 14px; font-weight: bold; border: 2px solid #000; padding: 2px;">12.00V</div>
+          <div style="font-size: 9px; margin-top: 6px;">SET I</div>
+          <div style="font-size: 14px; font-weight: bold; padding: 2px;">1.00A</div>
+        </div>
+      </div>
+
+      <!-- Lower area -->
+      <div style="display: flex; height: 68px; border-top: 1px solid #333;">
+        <!-- Power display -->
+        <div style="width: 138px; border-right: 1px solid #333; padding: 4px;">
+          <div style="font-size: 9px;">POWER</div>
+          <div style="font-size: 18px; font-weight: bold;">15.18W</div>
+        </div>
+
+        <!-- Functions -->
+        <div style="width: 102px; padding: 4px; font-size: 10px;">
+          <div style="border: 2px solid #000; padding: 2px; margin-bottom: 2px;">快速设置</div>
+          <div style="padding: 2px;">系统设置</div>
+        </div>
+      </div>
+
+      <!-- Status bar -->
+      <div style="height: 30px; border-top: 2px solid #333; display: flex; font-size: 10px;">
+        <div style="flex: 1; border-right: 1px solid #333; display: flex; align-items: center; justify-content: center;">ON</div>
+        <div style="flex: 1; border-right: 1px solid #333; display: flex; align-items: center; justify-content: center;">CV</div>
+        <div style="flex: 1; border-right: 1px solid #333; display: flex; align-items: center; justify-content: center;">25C</div>
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center;">normal</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>快速设置子菜单布局选项</h3>
+<p class="subtitle">用户从主界面选择"快速设置"后，进入子菜单显示预设列表</p>
+
+<div class="options">
+  <div class="option" data-choice="fullscreen" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>全屏覆盖列表（推荐）</h3>
+      <div class="mockup" style="margin-top: 8px;">
+        <div class="mockup-body" style="width: 240px; height: 240px; margin: 0 auto; background: white; border: 2px solid #333; position: relative; font-family: monospace; font-size: 11px;">
+          <!-- Title -->
+          <div style="height: 32px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold;">快速设置</div>
+
+          <!-- Preset list -->
+          <div style="padding: 8px;">
+            <div style="border: 3px solid #000; padding: 8px; margin-bottom: 6px; background: #f0f0f0;">
+              <div style="font-weight: bold; font-size: 12px;">预设1: 5V/1A</div>
+              <div style="font-size: 9px; color: #666;">常规USB供电</div>
+            </div>
+
+            <div style="padding: 8px; margin-bottom: 6px; border: 1px solid #999;">
+              <div style="font-weight: bold; font-size: 12px;">预设2: 9V/2A</div>
+              <div style="font-size: 9px; color: #666;">快充测试</div>
+            </div>
+
+            <div style="padding: 8px; margin-bottom: 6px; border: 1px solid #999;">
+              <div style="font-weight: bold; font-size: 12px;">预设3: 12V/3A</div>
+              <div style="font-size: 9px; color: #666;">LED灯带供电</div>
+            </div>
+
+            <div style="padding: 8px; margin-bottom: 6px; border: 1px solid #999;">
+              <div style="font-weight: bold; font-size: 12px;">预设4: 20V/3A</div>
+              <div style="font-size: 9px; color: #666;">笔记本供电</div>
+            </div>
+          </div>
+
+          <!-- Status bar -->
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 24px; border-top: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 10px;">
+            UP/DOWN选择 | ENTER确认 | EXIT返回
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>空间充足，可显示详细信息（电压/电流/名称）</li>
+            <li>视觉焦点集中，不受主界面干扰</li>
+            <li>符合常见子菜单交互习惯</li>
+            <li>易于扩展（未来可添加更多预设）</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>完全覆盖主界面，无法查看当前输出状态</li>
+            <li>需要全屏重绘（约86ms）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="popup" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>中央弹窗式</h3>
+      <div class="mockup" style="margin-top: 8px;">
+        <div class="mockup-body" style="width: 240px; height: 240px; margin: 0 auto; background: white; border: 2px solid #333; position: relative; font-family: monospace; font-size: 11px;">
+          <!-- Dimmed main UI -->
+          <div style="opacity: 0.3;">
+            <div style="height: 32px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold;">LC POWER</div>
+            <div style="padding: 20px; font-size: 9px; color: #999;">
+              [主界面内容被半透明覆盖]
+            </div>
+          </div>
+
+          <!-- Popup window -->
+          <div style="position: absolute; top: 40px; left: 20px; right: 20px; bottom: 40px; background: white; border: 3px solid #000; padding: 8px;">
+            <div style="font-weight: bold; text-align: center; margin-bottom: 8px;">快速设置</div>
+            <div style="font-size: 10px; padding: 4px; border: 2px solid #000; margin-bottom: 4px;">1. 5V/1A</div>
+            <div style="font-size: 10px; padding: 4px; border: 1px solid #999; margin-bottom: 4px;">2. 9V/2A</div>
+            <div style="font-size: 10px; padding: 4px; border: 1px solid #999; margin-bottom: 4px;">3. 12V/3A</div>
+            <div style="font-size: 10px; padding: 4px; border: 1px solid #999; margin-bottom: 4px;">4. 20V/3A</div>
+            <div style="font-size: 9px; text-align: center; margin-top: 8px; color: #666;">UP/DN | OK | EXIT</div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>保留主界面部分可见性</li>
+            <li>视觉上更"轻量"，不那么侵入</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>实现复杂（需要半透明效果或灰度处理）</li>
+            <li>240×240屏幕较小，弹窗内空间受限</li>
+            <li>代码难以维护（需要保存/恢复背景）</li>
+            <li>刷新开销大（需处理背景+弹窗）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>简化列表（仅显示电压/电流值）</h3>
+      <div class="mockup" style="margin-top: 8px;">
+        <div class="mockup-body" style="width: 240px; height: 240px; margin: 0 auto; background: white; border: 2px solid #333; position: relative; font-family: monospace; font-size: 11px;">
+          <!-- Title -->
+          <div style="height: 32px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold;">快速设置</div>
+
+          <!-- Simple list -->
+          <div style="padding: 20px;">
+            <div style="border: 3px solid #000; padding: 12px; margin-bottom: 10px; background: #f0f0f0; text-align: center;">
+              <div style="font-size: 16px; font-weight: bold;">5V / 1A</div>
+            </div>
+
+            <div style="padding: 12px; margin-bottom: 10px; border: 1px solid #999; text-align: center;">
+              <div style="font-size: 16px; font-weight: bold;">9V / 2A</div>
+            </div>
+
+            <div style="padding: 12px; margin-bottom: 10px; border: 1px solid #999; text-align: center;">
+              <div style="font-size: 16px; font-weight: bold;">12V / 3A</div>
+            </div>
+
+            <div style="padding: 12px; margin-bottom: 10px; border: 1px solid #999; text-align: center;">
+              <div style="font-size: 16px; font-weight: bold;">20V / 3A</div>
+            </div>
+          </div>
+
+          <!-- Status bar -->
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 24px; border-top: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 10px;">
+            UP/DOWN | ENTER | EXIT
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>视觉极简，字体更大更清晰</li>
+            <li>代码最简单（无需描述文字）</li>
+            <li>渲染性能最优</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>缺少描述信息，用户需记住预设含义</li>
+            <li>不够友好（特别是初次使用时）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #f9f9f9; border-left: 4px solid #333;">
+  <h3>技术约束</h3>
+  <ul>
+    <li><strong>显示硬件</strong>: ST7789 240×240 TFT, 软件SPI (~2MHz)</li>
+    <li><strong>性能</strong>: 全屏刷新约86ms, 小文本区域5-10ms</li>
+    <li><strong>字体</strong>: 当前仅支持ASCII 5×7点阵，缩放1x-4x（中文字体未实现）</li>
+    <li><strong>架构</strong>: BSP → Driver → Product层，严格分层，使用Dirty-flag局部刷新</li>
+    <li><strong>预设数据</strong>: 当前硬编码4个预设 (state_machine.c:431-436)</li>
+  </ul>
+</div>
