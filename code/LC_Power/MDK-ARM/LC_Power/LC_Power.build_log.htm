@@ -27,7 +27,14 @@ Project File Date:  06/09/2026
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\ProgramFile\MDK\Core\ARM\ARMCC\Bin'
 Build target 'LC_Power'
-"LC_Power\LC_Power.axf" - 0 Error(s), 0 Warning(s).
+compiling ui_display.c...
+..\Layer\Product\ui_display.c(622): warning:  #177-D: function "UI_DrawQuickSetItem"  was declared but never referenced
+  static void UI_DrawQuickSetItem(int16_t y, uint8_t index, uint8_t is_active, uint8_t has_cursor)
+..\Layer\Product\ui_display.c: 1 warning, 0 errors
+linking...
+Program Size: Code=30748 RO-data=1580 RW-data=448 ZI-data=2896  
+FromELF: creating hex file...
+"LC_Power\LC_Power.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -51,7 +58,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.4.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

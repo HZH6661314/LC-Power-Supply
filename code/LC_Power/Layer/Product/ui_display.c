@@ -676,25 +676,33 @@ static void UI_DrawQuickSetMenu(void)
         TFT_FillScreen(UI_COLOR_BG);
         s_cache.quick_set_initialized = 1U;
 
-        // 绘制全部4个预设项（初始无光标）
+        // 绘制全部4个预设项
         y = 80;
         for (i = 0; i < 4U; i++) {
             float voltage = 0.0f;
             float current = 0.0f;
             char text[32];
             int16_t x = 20;
+            uint8_t has_cursor = (cursor == i);
 
             SM_Get_QuickSetPreset(i, &voltage, &current);
 
+            // 如果有光标，填充反色背景
+            if (has_cursor != 0U) {
+                TFTGFX_FillRect((int16_t)(x - 5), y, 220, 14, UI_COLOR_FG);
+            }
+
             // 绘制箭头（如果已激活）
             if (active == i) {
-                TFTGFX_DrawStringOpaque(x, y, ">", UI_COLOR_FG, UI_COLOR_BG, 2U);
+                uint16_t arrow_color = has_cursor ? UI_COLOR_BG : UI_COLOR_FG;
+                TFTGFX_DrawString(x, y, ">", arrow_color, 2U);
             }
 
             // 绘制预设内容
             (void)snprintf(text, sizeof(text), "%u. %05.2fV  %04.2fA",
                            (unsigned int)(i + 1U), voltage, current);
-            TFTGFX_DrawStringOpaque((int16_t)(x + 15), y, text, UI_COLOR_FG, UI_COLOR_BG, 2U);
+            uint16_t text_color = has_cursor ? UI_COLOR_BG : UI_COLOR_FG;
+            TFTGFX_DrawString((int16_t)(x + 15), y, text, text_color, 2U);
 
             y += 22;
         }
@@ -720,8 +728,8 @@ static void UI_DrawQuickSetMenu(void)
 
             SM_Get_QuickSetPreset(old_cursor, &voltage, &current);
 
-            // 填充白色背景
-            TFTGFX_FillRect((int16_t)(x - 5), y, 200, 14, UI_COLOR_BG);
+            // 填充白色背景（宽度220以显示完整文字包括"A"）
+            TFTGFX_FillRect((int16_t)(x - 5), y, 220, 14, UI_COLOR_BG);
 
             // 如果有箭头，绘制箭头
             if (active == old_cursor) {
@@ -744,8 +752,8 @@ static void UI_DrawQuickSetMenu(void)
 
             SM_Get_QuickSetPreset(cursor, &voltage, &current);
 
-            // 填充黑色背景
-            TFTGFX_FillRect((int16_t)(x - 5), y, 200, 14, UI_COLOR_FG);
+            // 填充黑色背景（宽度220以显示完整文字包括"A"）
+            TFTGFX_FillRect((int16_t)(x - 5), y, 220, 14, UI_COLOR_FG);
 
             // 如果有箭头，绘制箭头（白色）
             if (active == cursor) {
