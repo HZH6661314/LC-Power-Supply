@@ -19,6 +19,7 @@
 
 #include "state_machine.h"
 #include "tft_gfx.h"
+#include "tft_driver.h"  // For TFT_FillScreen
 #include "tim.h"        // V10: 需要htim2用于光标闪烁
 #include "bsp_hrtim.h"  // V10: 需要g_TIM2_Tick
 
@@ -668,7 +669,7 @@ static void UI_DrawQuickSetMenu(void)
 
     // 首次进入QUICK_SET状态：清屏并标记已初始化
     if (s_cache.quick_set_initialized == 0U) {
-        TFTGFX_FillScreen(UI_COLOR_BG);
+        TFT_FillScreen(UI_COLOR_BG);
         s_cache.quick_set_initialized = 1U;
         s_cache.quick_set_cursor = UI_INVALID_U8;  // 强制首次重绘
     }
