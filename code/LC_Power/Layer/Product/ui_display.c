@@ -90,6 +90,7 @@ typedef struct {
     uint8_t system_status;
     uint8_t quick_set_cursor;       // Cache cursor position for dirty detection
     uint8_t quick_set_initialized;  // Track first entry to QUICK_SET state
+    uint8_t quick_set_active;       // Cache active preset index
 } UI_Cache_t;
 
 static UI_Cache_t s_cache;
@@ -134,6 +135,7 @@ void UI_Display_Init(void)
     s_cache.system_status = UI_INVALID_U8;
     s_cache.quick_set_cursor = UI_INVALID_U8;
     s_cache.quick_set_initialized = 0U;
+    s_cache.quick_set_active = UI_INVALID_U8;
 
     UI_DrawStaticFrame();
 
@@ -654,39 +656,82 @@ static void UI_DrawQuickSetItem(int16_t y, uint8_t index, uint8_t is_active, uin
 
 /**
  * @brief  绘制完整的快速设置子菜单（全屏覆盖）
- * @note   首次进入时清屏，光标移动时重绘全部4个预设项
+ * @note   增量更新策略：只重绘变化的行，避免整屏刷新闪烁
  * @retval None
  */
 static void UI_DrawQuickSetMenu(void)
 {
     uint8_t cursor;
     uint8_t active;
+    uint8_t old_cursor;
+    uint8_t old_active;
     int16_t y;
     uint8_t i;
 
     cursor = SM_Get_QuickSetCursor();
     active = SM_Get_ActivePresetIndex();
 
-    // 首次进入QUICK_SET状态：清屏并标记已初始化
+    // 首次进入QUICK_SET状态：清屏并绘制所有项目
     if (s_cache.quick_set_initialized == 0U) {
         TFT_FillScreen(UI_COLOR_BG);
         s_cache.quick_set_initialized = 1U;
-        s_cache.quick_set_cursor = UI_INVALID_U8;  // 强制首次重绘
-    }
-
-    // Dirty检查：仅当光标位置变化时重绘
-    if (s_cache.quick_set_cursor != cursor) {
-        y = 80;  // 起始Y坐标（垂直居中：(240-80)/2=80）
 
         // 绘制全部4个预设项
+        y = 80;
         for (i = 0; i < 4U; i++) {
             uint8_t is_active = (active == i);
             uint8_t has_cursor = (cursor == i);
             UI_DrawQuickSetItem(y, i, is_active, has_cursor);
-            y += 22;  // 行间距：14px字高 + 8px间隙
+            y += 22;
         }
 
         s_cache.quick_set_cursor = cursor;
+        s_cache.quick_set_active = active;
+        return;
+    }
+
+    old_cursor = s_cache.quick_set_cursor;
+    old_active = s_cache.quick_set_active;
+
+    // 增量更新：只重绘变化的行
+    // 策略：光标移动时只重绘旧位置和新位置，箭头变化时只重绘相关行
+
+    // 情况1：光标位置变化（UP/DOWN按键）
+    if (old_cursor != cursor) {
+        // 重绘旧光标位置（移除反色）
+        if (old_cursor < 4U) {
+            y = (int16_t)(80 + old_cursor * 22);
+            uint8_t is_active = (active == old_cursor);
+            UI_DrawQuickSetItem(y, old_cursor, is_active, 0U);
+        }
+
+        // 重绘新光标位置（添加反色）
+        if (cursor < 4U) {
+            y = (int16_t)(80 + cursor * 22);
+            uint8_t is_active = (active == cursor);
+            UI_DrawQuickSetItem(y, cursor, is_active, 1U);
+        }
+
+        s_cache.quick_set_cursor = cursor;
+    }
+
+    // 情况2：激活预设变化（SET按键应用新预设）
+    if (old_active != active) {
+        // 重绘旧激活项（移除箭头）
+        if (old_active < 4U) {
+            y = (int16_t)(80 + old_active * 22);
+            uint8_t has_cursor = (cursor == old_active);
+            UI_DrawQuickSetItem(y, old_active, 0U, has_cursor);
+        }
+
+        // 重绘新激活项（添加箭头）
+        if (active < 4U) {
+            y = (int16_t)(80 + active * 22);
+            uint8_t has_cursor = (cursor == active);
+            UI_DrawQuickSetItem(y, active, 1U, has_cursor);
+        }
+
+        s_cache.quick_set_active = active;
     }
 }
 
