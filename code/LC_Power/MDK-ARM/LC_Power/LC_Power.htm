@@ -3,7 +3,7 @@
 <title>Static Call Graph - [LC_Power\LC_Power.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image LC_Power\LC_Power.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Jun 09 14:05:31 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Jun 09 14:14:36 2026
 <BR><P>
 <H3>Maximum Stack Usage =        384 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -132,8 +132,8 @@ Function Pointers
 Global Symbols
 </H3>
 <P><STRONG><a name="[64]"></a>__main</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, __main.o(!!!main))
-<BR><BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<BR><BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
 </UL>
 
 <P><STRONG><a name="[65]"></a>__scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter))
@@ -254,8 +254,8 @@ Global Symbols
 <P><STRONG><a name="[1a2]"></a>__rt_lib_shutdown_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000E))
 
 <P><STRONG><a name="[66]"></a>__rt_entry</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry.o(.ARM.Collect$$rtentry$$00000000))
-<BR><BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<BR><BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 </UL>
 
 <P><STRONG><a name="[1a3]"></a>__rt_entry_presh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000002))
@@ -300,9 +300,7 @@ Global Symbols
 <P><STRONG><a name="[7d]"></a>Power_Control_Process</STRONG> (Thumb, 480 bytes, Stack size 56 bytes, power_control.o(.ccmram))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Power_Control_Process &rArr; BSP_HRTIM_UpdateDutySymmetric
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_TargetVoltageFinal
-<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_CurrentLimit
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED3_ON
+<BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED3_ON
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED3_OFF
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BSP_HRTIM_UpdateDutySymmetric
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Power_Control_UpdateVoltageRamp
@@ -311,6 +309,8 @@ Global Symbols
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_VOUT
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_IOUT
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_PowerLimit
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_TargetVoltageFinal
+<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_CurrentLimit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_ConvCpltCallback
 </UL>
@@ -515,8 +515,8 @@ Global Symbols
 <P><STRONG><a name="[138]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __aeabi_memcpy4
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_QuickSetPreset
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyQuickSet
+<BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyQuickSet
+<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_QuickSetPreset
 </UL>
 
 <P><STRONG><a name="[1a8]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
@@ -737,10 +737,10 @@ Global Symbols
 <P><STRONG><a name="[ab]"></a>BSP_GPIO_Init</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, bsp_gpio.o(i.BSP_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = BSP_GPIO_Init &rArr; Drv_LED0_OFF
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED2_OFF
-<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED1_OFF
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED0_OFF
+<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED0_OFF
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED3_OFF
+<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED2_OFF
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED1_OFF
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BSP_Init
 </UL>
@@ -775,19 +775,19 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[15c]"></a>BSP_LCD_GetInterface</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, bsp_lcd.o(i.BSP_LCD_GetInterface))
-<BR><BR>[Called By]<UL><LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitStart
-<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
-<LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteData8
+<BR><BR>[Called By]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteData8
 <LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteCommand
 <LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteColorRepeat
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitStart
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
 </UL>
 
 <P><STRONG><a name="[15b]"></a>BSP_LCD_GetOps</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, bsp_lcd.o(i.BSP_LCD_GetOps))
-<BR><BR>[Called By]<UL><LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitStart
-<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
-<LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteData8
+<BR><BR>[Called By]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteData8
 <LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteCommand
 <LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteColorRepeat
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitStart
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
 </UL>
 
 <P><STRONG><a name="[b4]"></a>BSP_LCD_Init</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, bsp_lcd.o(i.BSP_LCD_Init))
@@ -1719,9 +1719,9 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[131]"></a>Power_Control_GetActiveMode</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, power_control.o(i.Power_Control_GetActiveMode))
-<BR><BR>[Called By]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_CCMode
-<LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SoftStart_Run
+<BR><BR>[Called By]<UL><LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SoftStart_Run
 <LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RunNing_Run
+<LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_CCMode
 </UL>
 
 <P><STRONG><a name="[12e]"></a>Power_Control_Init</STRONG> (Thumb, 90 bytes, Stack size 24 bytes, power_control.o(i.Power_Control_Init))
@@ -1763,7 +1763,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> key.o(.constdata)
 </UL>
 <P><STRONG><a name="[58]"></a>SM_Action_Enter</STRONG> (Thumb, 76 bytes, Stack size 0 bytes, state_machine.o(i.SM_Action_Enter))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SM_Action_Enter &rArr; SM_ApplyQuickSet &rArr; __aeabi_memcpy4
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SM_Action_Enter &rArr; SM_ApplyQuickSet &rArr; SM_ApplyPowerShield
 </UL>
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ToggleOutput
 <LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyQuickSet
@@ -1958,8 +1958,8 @@ Global Symbols
 <P><STRONG><a name="[14a]"></a>TFTGFX_DrawChar</STRONG> (Thumb, 144 bytes, Stack size 48 bytes, tft_gfx.o(i.TFTGFX_DrawChar))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = TFTGFX_DrawChar &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_FillRect
-<LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawPixel
+<BR>[Calls]<UL><LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawPixel
+<LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_FillRect
 </UL>
 <BR>[Called By]<UL><LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawString
 </UL>
@@ -1967,8 +1967,8 @@ Global Symbols
 <P><STRONG><a name="[14d]"></a>TFTGFX_DrawCharOpaque</STRONG> (Thumb, 198 bytes, Stack size 64 bytes, tft_gfx.o(i.TFTGFX_DrawCharOpaque))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_FillRect
-<LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawPixel
+<BR>[Calls]<UL><LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawPixel
+<LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_FillRect
 </UL>
 <BR>[Called By]<UL><LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawStringOpaque
 </UL>
@@ -2028,12 +2028,12 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_FillRect
 </UL>
-<BR>[Called By]<UL><LI><a href="#[179]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawTitle
+<BR>[Called By]<UL><LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawCharOpaque
+<LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawChar
+<LI><a href="#[179]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawTitle
 <LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawQuickSetItem
 <LI><a href="#[174]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawProgressBar
 <LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_ClearScreen
-<LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawCharOpaque
-<LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawChar
 </UL>
 
 <P><STRONG><a name="[17a]"></a>TFTGFX_MeasureStringWidth</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, tft_gfx.o(i.TFTGFX_MeasureStringWidth))
@@ -2046,9 +2046,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_SetAddressWindow
 <LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteColorRepeat
 </UL>
-<BR>[Called By]<UL><LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawLine
-<LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawCharOpaque
+<BR>[Called By]<UL><LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawCharOpaque
 <LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawChar
+<LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawLine
 </UL>
 
 <P><STRONG><a name="[14f]"></a>TFT_FillRect</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, tft_driver.o(i.TFT_FillRect))
@@ -2057,10 +2057,10 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_SetAddressWindow
 <LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteColorRepeat
 </UL>
-<BR>[Called By]<UL><LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_FillScreen
+<BR>[Called By]<UL><LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawHLineClipped
+<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_FillScreen
 <LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_FillRect
 <LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawLine
-<LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawHLineClipped
 </UL>
 
 <P><STRONG><a name="[15a]"></a>TFT_FillScreen</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, tft_driver.o(i.TFT_FillScreen))
@@ -2098,9 +2098,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteData8
 <LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_WriteCommand
 </UL>
-<BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
-<LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_FillRect
+<BR>[Called By]<UL><LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_FillRect
 <LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_DrawPixel
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
 </UL>
 
 <P><STRONG><a name="[145]"></a>TFT_SetBacklight</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, tft_driver.o(i.TFT_SetBacklight))
@@ -2117,9 +2117,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BSP_LCD_GetOps
 <LI><a href="#[15c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BSP_LCD_GetInterface
 </UL>
-<BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
-<LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_SetAddressWindow
+<BR>[Called By]<UL><LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_SetAddressWindow
 <LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_ConfigureRegisters
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_InitProcess
 </UL>
 
 <P><STRONG><a name="[157]"></a>TFT_WriteData8</STRONG> (Thumb, 56 bytes, Stack size 16 bytes, tft_driver.o(i.TFT_WriteData8))
@@ -2179,7 +2179,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PWM_ConfigChannel
 </UL>
 
-<P><STRONG><a name="[146]"></a>UI_Display_Init</STRONG> (Thumb, 94 bytes, Stack size 8 bytes, ui_display.o(i.UI_Display_Init))
+<P><STRONG><a name="[146]"></a>UI_Display_Init</STRONG> (Thumb, 96 bytes, Stack size 8 bytes, ui_display.o(i.UI_Display_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 280 + Unknown Stack Size
  + In Cycle
 <LI>Call Chain = UI_Display_Init &rArr;  UI_Display_Process (Cycle)
@@ -2266,11 +2266,11 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[bc]"></a>gpio_pin_write</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, bsp_gpio.o(i.gpio_pin_write))
-<BR><BR>[Called By]<UL><LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED2_OFF
-<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED1_OFF
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED0_OFF
+<BR><BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED0_OFF
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED3_ON
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED3_OFF
+<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED2_OFF
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Drv_LED1_OFF
 </UL>
 
 <P><STRONG><a name="[77]"></a>main</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, main.o(i.main))
@@ -2601,7 +2601,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawQuickSetMenu
 </UL>
 
-<P><STRONG><a name="[166]"></a>UI_DrawQuickSetMenu</STRONG> (Thumb, 106 bytes, Stack size 24 bytes, ui_display.o(i.UI_DrawQuickSetMenu))
+<P><STRONG><a name="[166]"></a>UI_DrawQuickSetMenu</STRONG> (Thumb, 248 bytes, Stack size 24 bytes, ui_display.o(i.UI_DrawQuickSetMenu))
 <BR><BR>[Stack]<UL><LI>Max Depth = 288 + Unknown Stack Size
 <LI>Call Chain = UI_DrawQuickSetMenu &rArr; UI_DrawQuickSetItem &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
 </UL>
@@ -2717,16 +2717,16 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ClampFloat
 </UL>
-<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Up
+<BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyQuickSet
+<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Up
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Down
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyQuickSet
 </UL>
 
 <P><STRONG><a name="[135]"></a>SM_ApplyQuickSet</STRONG> (Thumb, 56 bytes, Stack size 48 bytes, state_machine.o(i.SM_ApplyQuickSet))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SM_ApplyQuickSet &rArr; __aeabi_memcpy4
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SM_ApplyQuickSet &rArr; SM_ApplyPowerShield
 </UL>
-<BR>[Calls]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyPowerShield
+<BR>[Calls]<UL><LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyPowerShield
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Enter
 </UL>
@@ -2734,15 +2734,15 @@ Local Symbols
 <P><STRONG><a name="[13e]"></a>SM_ChangeState</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, state_machine.o(i.SM_ChangeState))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SM_ChangeState
 </UL>
-<BR>[Called By]<UL><LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;State_Machine_Init
-<LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SoftStart_Run
+<BR>[Called By]<UL><LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SoftStart_Run
 <LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ToggleOutput
+<LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;State_Machine_Init
 </UL>
 
 <P><STRONG><a name="[133]"></a>SM_ClampFloat</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, state_machine.o(i.SM_ClampFloat))
-<BR><BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Up
+<BR><BR>[Called By]<UL><LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyPowerShield
+<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Up
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Action_Down
-<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_ApplyPowerShield
 </UL>
 
 <P><STRONG><a name="[132]"></a>SM_MoveFocus</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, state_machine.o(i.SM_MoveFocus))

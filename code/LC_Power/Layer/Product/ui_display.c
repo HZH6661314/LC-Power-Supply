@@ -656,7 +656,7 @@ static void UI_DrawQuickSetItem(int16_t y, uint8_t index, uint8_t is_active, uin
 
 /**
  * @brief  绘制完整的快速设置子菜单（全屏覆盖）
- * @note   增量更新策略：只重绘变化的行，避免整屏刷新闪烁
+ * @note   优化策略：光标移动时只改变背景填充+覆盖文字，箭头独立更新
  * @retval None
  */
 static void UI_DrawQuickSetMenu(void)
@@ -676,12 +676,26 @@ static void UI_DrawQuickSetMenu(void)
         TFT_FillScreen(UI_COLOR_BG);
         s_cache.quick_set_initialized = 1U;
 
-        // 绘制全部4个预设项
+        // 绘制全部4个预设项（初始无光标）
         y = 80;
         for (i = 0; i < 4U; i++) {
-            uint8_t is_active = (active == i);
-            uint8_t has_cursor = (cursor == i);
-            UI_DrawQuickSetItem(y, i, is_active, has_cursor);
+            float voltage = 0.0f;
+            float current = 0.0f;
+            char text[32];
+            int16_t x = 20;
+
+            SM_Get_QuickSetPreset(i, &voltage, &current);
+
+            // 绘制箭头（如果已激活）
+            if (active == i) {
+                TFTGFX_DrawStringOpaque(x, y, ">", UI_COLOR_FG, UI_COLOR_BG, 2U);
+            }
+
+            // 绘制预设内容
+            (void)snprintf(text, sizeof(text), "%u. %05.2fV  %04.2fA",
+                           (unsigned int)(i + 1U), voltage, current);
+            TFTGFX_DrawStringOpaque((int16_t)(x + 15), y, text, UI_COLOR_FG, UI_COLOR_BG, 2U);
+
             y += 22;
         }
 
@@ -693,23 +707,55 @@ static void UI_DrawQuickSetMenu(void)
     old_cursor = s_cache.quick_set_cursor;
     old_active = s_cache.quick_set_active;
 
-    // 增量更新：只重绘变化的行
-    // 策略：光标移动时只重绘旧位置和新位置，箭头变化时只重绘相关行
-
     // 情况1：光标位置变化（UP/DOWN按键）
+    // 策略：只重绘变化行，但使用Opaque模式一次性完成，避免闪烁
     if (old_cursor != cursor) {
-        // 重绘旧光标位置（移除反色）
+        // 移除旧光标（重绘为正常样式：黑字白底）
         if (old_cursor < 4U) {
             y = (int16_t)(80 + old_cursor * 22);
-            uint8_t is_active = (active == old_cursor);
-            UI_DrawQuickSetItem(y, old_cursor, is_active, 0U);
+            int16_t x = 20;
+            float voltage = 0.0f;
+            float current = 0.0f;
+            char text[32];
+
+            SM_Get_QuickSetPreset(old_cursor, &voltage, &current);
+
+            // 填充白色背景
+            TFTGFX_FillRect((int16_t)(x - 5), y, 200, 14, UI_COLOR_BG);
+
+            // 如果有箭头，绘制箭头
+            if (active == old_cursor) {
+                TFTGFX_DrawString(x, y, ">", UI_COLOR_FG, 2U);
+            }
+
+            // 绘制文字（黑色）
+            (void)snprintf(text, sizeof(text), "%u. %05.2fV  %04.2fA",
+                           (unsigned int)(old_cursor + 1U), voltage, current);
+            TFTGFX_DrawString((int16_t)(x + 15), y, text, UI_COLOR_FG, 2U);
         }
 
-        // 重绘新光标位置（添加反色）
+        // 添加新光标（重绘为反色样式：白字黑底）
         if (cursor < 4U) {
             y = (int16_t)(80 + cursor * 22);
-            uint8_t is_active = (active == cursor);
-            UI_DrawQuickSetItem(y, cursor, is_active, 1U);
+            int16_t x = 20;
+            float voltage = 0.0f;
+            float current = 0.0f;
+            char text[32];
+
+            SM_Get_QuickSetPreset(cursor, &voltage, &current);
+
+            // 填充黑色背景
+            TFTGFX_FillRect((int16_t)(x - 5), y, 200, 14, UI_COLOR_FG);
+
+            // 如果有箭头，绘制箭头（白色）
+            if (active == cursor) {
+                TFTGFX_DrawString(x, y, ">", UI_COLOR_BG, 2U);
+            }
+
+            // 绘制文字（白色）
+            (void)snprintf(text, sizeof(text), "%u. %05.2fV  %04.2fA",
+                           (unsigned int)(cursor + 1U), voltage, current);
+            TFTGFX_DrawString((int16_t)(x + 15), y, text, UI_COLOR_BG, 2U);
         }
 
         s_cache.quick_set_cursor = cursor;
@@ -717,18 +763,35 @@ static void UI_DrawQuickSetMenu(void)
 
     // 情况2：激活预设变化（SET按键应用新预设）
     if (old_active != active) {
-        // 重绘旧激活项（移除箭头）
+        int16_t arrow_x = 20;
+        int16_t arrow_w = 12;
+
+        // 清除旧箭头
         if (old_active < 4U) {
             y = (int16_t)(80 + old_active * 22);
             uint8_t has_cursor = (cursor == old_active);
-            UI_DrawQuickSetItem(y, old_active, 0U, has_cursor);
+
+            if (has_cursor != 0U) {
+                // 光标行：填充黑色背景
+                TFTGFX_FillRect(arrow_x, y, arrow_w, 14, UI_COLOR_FG);
+            } else {
+                // 普通行：填充白色背景
+                TFTGFX_FillRect(arrow_x, y, arrow_w, 14, UI_COLOR_BG);
+            }
         }
 
-        // 重绘新激活项（添加箭头）
+        // 绘制新箭头
         if (active < 4U) {
             y = (int16_t)(80 + active * 22);
             uint8_t has_cursor = (cursor == active);
-            UI_DrawQuickSetItem(y, active, 1U, has_cursor);
+
+            if (has_cursor != 0U) {
+                // 光标行：白色箭头
+                TFTGFX_DrawString(arrow_x, y, ">", UI_COLOR_BG, 2U);
+            } else {
+                // 普通行：黑色箭头
+                TFTGFX_DrawString(arrow_x, y, ">", UI_COLOR_FG, 2U);
+            }
         }
 
         s_cache.quick_set_active = active;
