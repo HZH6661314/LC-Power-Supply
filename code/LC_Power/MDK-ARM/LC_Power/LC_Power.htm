@@ -3,11 +3,11 @@
 <title>Static Call Graph - [LC_Power\LC_Power.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image LC_Power\LC_Power.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Jun 09 14:25:00 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Jun 09 14:32:56 2026
 <BR><P>
 <H3>Maximum Stack Usage =        376 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-__rt_entry_main &rArr; main &rArr; SysCore_Run &rArr; UI_Display_Process &rArr; UI_DrawQuickSetMenu &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
+__rt_entry_main &rArr; main &rArr; SysCore_Run &rArr; UI_Display_Process &rArr; UI_Display_Init &rArr;  UI_Display_Process (Cycle)
 <P>
 <H3>
 Functions with no stack information
@@ -275,7 +275,7 @@ Global Symbols
 
 <P><STRONG><a name="[76]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
 <BR><BR>[Stack]<UL><LI>Max Depth = 376 + Unknown Stack Size
-<LI>Call Chain = __rt_entry_main &rArr; main &rArr; SysCore_Run &rArr; UI_Display_Process &rArr; UI_DrawQuickSetMenu &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
+<LI>Call Chain = __rt_entry_main &rArr; main &rArr; SysCore_Run &rArr; UI_Display_Process &rArr; UI_Display_Init &rArr;  UI_Display_Process (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
@@ -1923,7 +1923,7 @@ Global Symbols
 
 <P><STRONG><a name="[143]"></a>SysCore_Run</STRONG> (Thumb, 110 bytes, Stack size 16 bytes, task_manager.o(i.SysCore_Run))
 <BR><BR>[Stack]<UL><LI>Max Depth = 376 + Unknown Stack Size
-<LI>Call Chain = SysCore_Run &rArr; UI_Display_Process &rArr; UI_DrawQuickSetMenu &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
+<LI>Call Chain = SysCore_Run &rArr; UI_Display_Process &rArr; UI_Display_Init &rArr;  UI_Display_Process (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[147]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_Display_Process
 <LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_Display_Init
@@ -2018,7 +2018,6 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawValueText
 <LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawSettings
 <LI><a href="#[16b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawRealtime
-<LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawQuickSetMenu
 <LI><a href="#[16d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawPower
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawFunctions
 <LI><a href="#[16e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawCenteredAscii
@@ -2197,7 +2196,7 @@ Global Symbols
 
 <P><STRONG><a name="[147]"></a>UI_Display_Process</STRONG> (Thumb, 816 bytes, Stack size 80 bytes, ui_display.o(i.UI_Display_Process))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360 + Unknown Stack Size
-<LI>Call Chain = UI_Display_Process &rArr; UI_DrawQuickSetMenu &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
+<LI>Call Chain = UI_Display_Process &rArr; UI_Display_Init &rArr;  UI_Display_Process (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[152]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawRect
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_UI_State
@@ -2276,7 +2275,7 @@ Global Symbols
 
 <P><STRONG><a name="[77]"></a>main</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 376 + Unknown Stack Size
-<LI>Call Chain = main &rArr; SysCore_Run &rArr; UI_Display_Process &rArr; UI_DrawQuickSetMenu &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
+<LI>Call Chain = main &rArr; SysCore_Run &rArr; UI_Display_Process &rArr; UI_Display_Init &rArr;  UI_Display_Process (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysCore_Run
 <LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysCore_Init
@@ -2589,13 +2588,12 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_DrawSettings
 </UL>
 
-<P><STRONG><a name="[166]"></a>UI_DrawQuickSetMenu</STRONG> (Thumb, 586 bytes, Stack size 104 bytes, ui_display.o(i.UI_DrawQuickSetMenu))
-<BR><BR>[Stack]<UL><LI>Max Depth = 280 + Unknown Stack Size
-<LI>Call Chain = UI_DrawQuickSetMenu &rArr; TFTGFX_DrawStringOpaque &rArr; TFTGFX_DrawCharOpaque &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
+<P><STRONG><a name="[166]"></a>UI_DrawQuickSetMenu</STRONG> (Thumb, 642 bytes, Stack size 104 bytes, ui_display.o(i.UI_DrawQuickSetMenu))
+<BR><BR>[Stack]<UL><LI>Max Depth = 256 + Unknown Stack Size
+<LI>Call Chain = UI_DrawQuickSetMenu &rArr; TFTGFX_DrawString &rArr; TFTGFX_DrawChar &rArr; TFTGFX_FillRect &rArr; TFT_FillRect &rArr; TFT_SetAddressWindow &rArr; TFT_WriteData8
 </UL>
 <BR>[Calls]<UL><LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFT_FillScreen
 <LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_FillRect
-<LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawStringOpaque
 <LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFTGFX_DrawString
 <LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_QuickSetPreset
 <LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SM_Get_QuickSetCursor
